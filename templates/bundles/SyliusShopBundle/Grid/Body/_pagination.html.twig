@@ -1,0 +1,9 @@
+{% import '@SyliusShop/Common/Macro/pagination.html.twig' as pagination %}
+
+{% if data.haveToPaginate() %}
+    <div class="row mb-3">
+        <div class="col">
+            {{ pagination.simple(data) }}
+        </div>
+    </div>
+{% endif %}

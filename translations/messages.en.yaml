@@ -1,0 +1,26 @@
+theme:
+    bootstrap:
+        sylius:
+            ui:
+                choose: 'Choose...'
+                color_mode:
+                    toggle: 'Theme'
+                    scheme:
+                        auto: 'Auto'
+                        light: 'Light'
+                        dark: 'Dark'
+            http_error:
+                header: 'Oops! An Error Occurred'
+                subheader: 'The server returned a "%s"'
+                message:
+                    feedback: 'Something is broken. Please let us know what you were doing when this error occurred. We will fix it as soon as possible. Sorry for any inconvenience caused.'
+                link:
+                    contact: 'Report an error'
+                    homepage: 'Back to the homepage'
+            layout:
+                taxon_horizontal_menu: 'Main menu'
+            homepage:
+                carousel_control_prev: 'Previous'
+                carousel_control_next: 'Next'
+            product_review:
+                unknown_author: 'Guest'

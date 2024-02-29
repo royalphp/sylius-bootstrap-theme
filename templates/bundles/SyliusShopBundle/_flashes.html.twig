@@ -1,0 +1,35 @@
+{% if app.session is not null and app.session.started %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        {% for type in ['success', 'error', 'info', 'warning'] %}
+            {% for flash in app.session.flashbag.get(type) %}
+                {% if ('success' == type) %}
+                    {% set result = 'success' %}
+                    {% set icon = 'check-circle' %}
+                {% elseif ('error' == type) %}
+                    {% set result = 'danger' %}
+                    {% set icon = 'exclamation-triangle' %}
+                {% elseif ('info' == type) %}
+                    {% set result = 'info' %}
+                    {% set icon = 'info-circle' %}
+                {% elseif ('warning' == type) %}
+                    {% set result = 'warning' %}
+                    {% set icon = 'exclamation-diamond' %}
+                {% endif %}
+                <div class="toast border-{{ result }} show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header text-{{ result }}">
+                        <span class="d-block me-2"><i class="bi bi-{{ icon|default('cursor') }}"></i></span>
+                        <strong class="me-auto">{% set header = 'sylius.ui.'~type %}{{ header|trans }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        {% if flash is iterable %}
+                            {{ flash.message|trans(flash.parameters, 'flashes') }}
+                        {% else %}
+                            {{ flash|trans({}, 'flashes') }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}

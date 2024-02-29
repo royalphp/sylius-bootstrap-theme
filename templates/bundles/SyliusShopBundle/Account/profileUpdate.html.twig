@@ -1,0 +1,72 @@
+{% extends '@SyliusShop/Account/layout.html.twig' %}
+
+{% import '@SyliusShop/Common/Macro/breadcrumbs.html.twig' as breadcrumbs %}
+{% import '@SyliusShop/Common/Macro/headers.html.twig' as headers %}
+
+{% form_theme form '@SyliusShop/Form/theme.html.twig' %}
+
+{% block title %}{{ 'sylius.ui.your_profile'|trans }} | {{ parent() }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ breadcrumbs.default({
+        homepage: {label: 'sylius.ui.home'|trans, url: path('sylius_shop_homepage')},
+        account_dashboard: {label: 'sylius.ui.my_account'|trans, url: path('sylius_shop_account_dashboard')},
+        account_personal_information: {label: 'sylius.ui.personal_information'|trans}
+    }) }}
+{% endblock %}
+
+{% block subcontent %}
+    {{ headers.default('sylius.ui.your_profile'|trans, null, 'sylius.ui.edit_your_personal_information'|trans) }}
+
+    {{ sylius_template_event('sylius.shop.account.profile.update.after_content_header', {'customer': customer, 'form': form}) }}
+
+    <div class="row">
+        {{ form_start(form, {'action': path('sylius_shop_account_profile_update'), 'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+        <input type="hidden" name="_method" value="PUT" />
+
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.firstName, sylius_test_form_attribute('first-name')) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.lastName, sylius_test_form_attribute('last-name')) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            {{ form_row(form.email, sylius_test_form_attribute('email')) }}
+        </div>
+
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.birthday) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.gender) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            {{ form_row(form.phoneNumber) }}
+        </div>
+
+        <div class="col-12">
+            {{ form_row(form.subscribedToNewsletter, sylius_test_form_attribute('subscribe-newsletter')|merge({
+                label_attr: {
+                    class: 'checkbox-switch'
+                }
+            })) }}
+        </div>
+
+        {{ sylius_template_event('sylius.shop.account.profile.update.form', {'customer': customer, 'form': form}) }}
+
+        <button type="submit" class="btn btn-outline-sylius" {{ sylius_test_html_attribute('save-changes') }}>{{ 'sylius.ui.save_changes'|trans }}</button>
+        {{ form_row(form._token) }}
+        {{ form_end(form, {'render_rest': false}) }}
+    </div>
+{% endblock %}

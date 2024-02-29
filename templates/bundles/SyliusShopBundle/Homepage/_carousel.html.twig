@@ -1,0 +1,17 @@
+{% import '@SyliusShop/Common/Macro/carousel.html.twig' as carousel %}
+
+{% set featuredProducts %}
+    {% for product in products|batch(2, '') %}
+        <div class="carousel-item {{ loop.first ? 'active' }}">
+            <div class="row row-cols-1 row-cols-md-2 g-3">
+                {% for productFromBatch in product %}
+                    <div class="col">
+                        {% include '@SyliusShop/Product/_box.html.twig' with {'product': productFromBatch, 'is_carousel': true} %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% endset %}
+
+{{ carousel.simple(featuredProducts, true) }}

@@ -1,0 +1,21 @@
+{% form_theme form '@SyliusShop/Form/theme.html.twig' %}
+
+<div class="col-auto">
+    <div class="row bg-body-tertiary rounded shadow px-2 pt-2 g-2">
+        <div class="col">
+            {{ form_row(form.greaterThan, {
+                attr: {'placeholder': form.greaterThan.vars.label},
+                label: 'sylius.ui.money_filter',
+                label_translation_parameters: {'%label%': filter.label|trans, '%altLabel%': form.greaterThan.vars.label|trans}
+            }) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.lessThan, {
+                attr: {'placeholder': form.lessThan.vars.label}
+            }) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.currency) }}
+        </div>
+    </div>
+</div>

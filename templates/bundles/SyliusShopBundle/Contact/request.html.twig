@@ -1,0 +1,43 @@
+{% extends '@SyliusShop/layout.html.twig' %}
+
+{% import '@SyliusShop/Common/Macro/headers.html.twig' as headers %}
+
+{% form_theme form '@SyliusShop/Form/theme.html.twig' %}
+
+{% block title %}{{ 'sylius.ui.contact_us'|trans }} | {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center my-3">
+        <div class="col-md-6">
+            <div class="row mb-3">
+                <div class="col-auto">
+                    {{ headers.default('sylius.ui.contact_us'|trans, 'card-text', 'sylius.ui.use_the_contact_form_below_to_send_us_a_message'|trans) }}
+                    {{ sylius_template_event('sylius.shop.contact.request.after_content_header') }}
+                </div>
+            </div>
+            <div class="row">
+                {{ form_start(form, {'action': path('sylius_shop_contact_request'), 'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+                <div class="col-12">
+                    {{ form_row(form.email, sylius_test_form_attribute('contact-email')) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.message, sylius_test_form_attribute('contact-message')) }}
+                </div>
+
+                {{ sylius_template_event('sylius.shop.contact.request.form', {'form': form}) }}
+
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-sylius" {{ sylius_test_html_attribute('send-button') }}>{{ 'sylius.ui.send'|trans }}</button>
+                        </div>
+                    </div>
+                </div>
+
+                {{ form_row(form._token) }}
+                {{ form_end(form, {'render_rest': false}) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

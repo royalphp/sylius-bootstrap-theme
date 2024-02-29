@@ -1,0 +1,7 @@
+{% extends '@SyliusShop/layout.html.twig' %}
+
+{% import '@SyliusShop/Common/Macro/errors.html.twig' as errors %}
+
+{% block content %}
+    {{ errors.jumbotron(exception) }}
+{% endblock %}

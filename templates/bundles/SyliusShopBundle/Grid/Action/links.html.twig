@@ -1,0 +1,23 @@
+{% set visible = options.visible is defined ? options.visible : true %}
+
+{% if visible %}
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary btn-sm dropdown-toggle {{ options.class|default('') }}" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if options.icon is defined %}<i class="bi bi-{{ options.icon }}"></i>{% endif %}
+            {{ action.label|trans }}
+        </button>
+        <ul class="dropdown-menu">
+            {% if options.header is defined %}
+                <li><h6 class="dropdown-header">{{ options.header.label|trans }}</h6></li>
+                <li><hr class="dropdown-divider"></li>
+            {% endif %}
+            {% for link in options.links %}
+                {% set is_link_visible = link.visible is defined ? link.visible : true %}
+
+                {% if is_link_visible %}
+                    <li>{% include '@SyliusShop/Grid/Action/_link.html.twig' %}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

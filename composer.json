@@ -1,0 +1,89 @@
+{
+    "name": "royalphp/sylius-bootstrap-theme",
+    "description": "Minimalist theme for Sylius projects using Bootstrap css-framework and tools like Sass and Typescript.",
+    "keywords": [
+        "royalphp",
+        "sylius",
+        "sylius-theme",
+        "bootstrap"
+    ],
+    "type": "sylius-theme",
+    "license": "MIT",
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "RoyalPHP",
+            "email": "royalphpofficial@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "sylius/sylius": "^1.12",
+        "sylius/theme-bundle": "^2.3",
+        "symfony/webpack-encore-bundle": "^1.15"
+    },
+    "extra": {
+        "sylius-theme": {
+            "title": "SyliusBootstrapTheme",
+            "authors": [
+                {
+                    "name": "RoyalPHP",
+                    "email": "royalphpofficial@gmail.com"
+                }
+            ],
+            "screenshots": [
+                {
+                    "path": "docs/media/page_homepage.webp",
+                    "title": "Homepage",
+                    "description": "Home page of the customer's shop."
+                },
+                {
+                    "path": "docs/media/page_cart.webp",
+                    "title": "Cart",
+                    "description": "Customer shopping cart page."
+                },
+                {
+                    "path": "docs/media/page_checkout.webp",
+                    "title": "Checkout",
+                    "description": "Customer checkout page."
+                },
+                {
+                    "path": "docs/media/page_products.webp",
+                    "title": "Products",
+                    "description": "List of products for customers."
+                },
+                {
+                    "path": "docs/media/page_product.webp",
+                    "title": "Product",
+                    "description": "Product page for customers."
+                },
+                {
+                    "path": "docs/media/page_product_reviews.webp",
+                    "title": "Product reviews",
+                    "description": "List of product reviews."
+                },
+                {
+                    "path": "docs/media/page_account_profile.webp",
+                    "title": "Account profile",
+                    "description": "Customer profile page."
+                },
+                {
+                    "path": "docs/media/page_account_address.webp",
+                    "title": "Account address",
+                    "description": "List of customer addresses"
+                },
+                {
+                    "path": "docs/media/page_account_orders.webp",
+                    "title": "Account orders",
+                    "description": "Customer order history page."
+                },
+                {
+                    "path": "docs/media/page_account_order.webp",
+                    "title": "Account order",
+                    "description": "Detailed information on the customer's order."
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,7 @@
+<div class="row justify-content-center my-4">
+    <div class="col-auto">
+        <h2>{{ 'sylius.ui.you_may_also_like'|trans }} <i class="bi bi-chevron-right text-primary fs-4"></i></h2>
+    </div>
+</div>
+
+{{ render(url('sylius_shop_partial_product_index_latest', {'count': 4, 'template': '@SyliusShop/Product/_horizontalList.html.twig'})) }}

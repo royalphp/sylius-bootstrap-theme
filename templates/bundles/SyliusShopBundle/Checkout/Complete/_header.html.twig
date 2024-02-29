@@ -1,0 +1,16 @@
+{% import '@SyliusShop/Common/Macro/headers.html.twig' as headers %}
+{% import '@SyliusShop/Common/Macro/flags.html.twig' as flags %}
+
+{% set subheader %}
+    <span>
+        <span {{ sylius_test_html_attribute('order-currency-code') }}>{{ order.currencyCode }}</span>
+        <i class="bi bi-dot"></i>
+        <span {{ sylius_test_html_attribute('order-locale-name') }}>{{ flags.fromLocaleCode(sylius.localeCode) }}{{ sylius.localeCode|sylius_locale_name }}</span>
+    </span>
+{% endset %}
+
+<div class="row mb-3">
+    <div class="col">
+        {{ headers.default('sylius.ui.summary_of_your_order'|trans, 'cart-check', subheader) }}
+    </div>
+</div>

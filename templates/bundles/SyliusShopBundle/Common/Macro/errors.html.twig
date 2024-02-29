@@ -1,0 +1,25 @@
+{% macro jumbotron(exception) %}
+    {% import '@SyliusShop/Common/Macro/headers.html.twig' as headers %}
+    {% set desc = exception.statusCode ~ ' ' ~ exception.statusText %}
+
+    <div class="row bg-body-secondary rounded-3 shadow my-5 py-5">
+        <div class="col">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="text-center">
+                        {{ headers.default('theme.bootstrap.sylius.http_error.header'|trans, null, 'theme.bootstrap.sylius.http_error.subheader'|trans|format(desc)) }}
+                        <p class="lead">{{ 'theme.bootstrap.sylius.http_error.message.feedback'|trans }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <a class="btn btn-outline-info" href="{{ url('sylius_shop_contact_request') }}">{{ 'theme.bootstrap.sylius.http_error.link.contact'|trans }}</a>
+                </div>
+                <div class="col-auto">
+                    <a class="btn btn-outline-warning" href="{{ url('sylius_shop_homepage') }}">{{ 'theme.bootstrap.sylius.http_error.link.homepage'|trans }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

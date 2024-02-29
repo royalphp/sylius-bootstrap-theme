@@ -1,0 +1,20 @@
+<div class="col-12" id="sylius-api-login">
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.email, sylius_test_form_attribute('login-email')|sylius_merge_recursive({
+                'attr': {'data-absolute-url': url('sylius_shop_ajax_user_check_action')}
+            })) }}
+        </div>
+        <div class="col d-none">
+            <label for="sylius_checkout_address_customer_password" class="form-label">{{ 'sylius.ui.password'|trans }}</label>
+            <div class="input-group mb-3" id="sylius-api-login-form">
+                <input type="password" {{ sylius_test_html_attribute('password-input') }} class="form-control" id="sylius_checkout_address_customer_password" autocomplete>
+                <input type="hidden" name="_csrf_shop_security_token" value="{{ csrf_token('shop_authenticate') }}" id="sylius_checkout_address_customer_csrf">
+                <button type="button" class="btn btn-outline-sylius" id="sylius-api-login-submit" {{ sylius_test_html_attribute('login-button') }} data-absolute-url="{{ url('sylius_shop_login_check') }}">{{ 'sylius.ui.sign_in'|trans }}</button>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="sylius-validation-error" id="sylius-api-validation-error" {{ sylius_test_html_attribute('login-validation-error') }}></div>
+        </div>
+    </div>
+</div>

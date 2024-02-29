@@ -1,0 +1,107 @@
+{% macro default(url, message, id, icon, class) %}
+    <a class="btn {% if class is not empty %}{{ class }} {% endif %}" {% if id is not null %} id="{{ id }}"{% endif %} href="{{ url }}" {{ sylius_test_html_attribute('button', id|default(message)) }}>
+        {% if icon is not empty %}
+            <i class="bi bi-{{ icon }}"></i>
+        {% endif %}
+        {% if message is not empty %}
+            {{ message|trans }}
+        {% endif %}
+    </a>
+{% endmacro %}
+
+{% macro show(url, message, id, class, labeled = true) %}
+    {% import _self as buttons %}
+
+    {% if message is empty and labeled %}
+        {% set message = 'sylius.ui.show' %}
+    {% endif %}
+
+    {{ buttons.default(url, message, id, 'eye', class) }}
+{% endmacro %}
+
+{% macro create(url, message, id, class, labeled = true) %}
+    {% import _self as buttons %}
+
+    {% if message is empty and labeled %}
+        {% set message = 'sylius.ui.create' %}
+    {% endif %}
+
+    {{ buttons.default(url, message, id, 'plus', class) }}
+{% endmacro %}
+
+{% macro edit(url, message, id, labeled = true, class = null) %}
+    {% import _self as buttons %}
+
+    {% if message is empty and labeled %}
+        {% set message = 'sylius.ui.edit' %}
+    {% endif %}
+
+    {% if class is null %}
+        {% set class = 'btn-outline-warning btn-sm' %}
+    {% endif %}
+
+    {{ buttons.default(url, message, id, 'pencil', class) }}
+{% endmacro %}
+
+{% macro archive(url, message) %}
+    <form action="{{ url }}" method="POST" name="sylius_archivable">
+        <input type="hidden" name="_method" value="PATCH">
+        <input type="hidden" name="sylius_archivable[_token]" value="{{ csrf_token('sylius_archivable') }}" />
+        <button class="btn btn-outline-secondary btn-sm" type="submit" data-bs-toggle="modal" data-bs-target="#confirmationModal" data-requires-confirmation>
+            <i class="bi bi-archive"></i>
+            {{ message|trans }}
+        </button>
+    </form>
+{% endmacro %}
+
+{% macro delete(url, message, labeled = true, resourceId = null) %}
+    <form action="{{ url }}" method="post">
+        <input type="hidden" name="_method" value="DELETE">
+        <button class="btn btn-outline-danger btn-sm" type="submit" data-bs-toggle="modal" data-bs-target="#confirmationModal" {{ sylius_test_html_attribute('delete-button') }}>
+            <i class="bi bi-trash"></i> {{ ((message is empty and labeled) ? 'sylius.ui.delete' : message)|trans }}
+        </button>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token(resourceId) }}" />
+    </form>
+{% endmacro %}
+
+{% macro bulkDelete(url, message, labeled = true) %}
+    <form action="{{ url }}" method="post">
+        <input type="hidden" name="_method" value="DELETE">
+        <button class="btn btn-danger {% if labeled %}labeled {% endif %}icon button sylius-grid-nav__bulk" type="submit" data-bs-toggle="modal" data-bs-target="#confirmationModal" data-bulk-action-requires-confirmation disabled>
+            <i class="bi bi-trash"></i> {{ ((message is empty and labeled) ? 'sylius.ui.delete' : message)|trans }}
+        </button>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('bulk_delete') }}" />
+    </form>
+{% endmacro %}
+
+{% macro submit(message, id, icon, class = null) %}
+    {% if class is null %}
+        {% set class = 'btn btn-outline-sylius' %}
+    {% endif %}
+
+    <button type="submit" class="{{ class }}" id="{{ id }}" {{ sylius_test_html_attribute(id) }}>
+        <i class="bi bi-{{ icon }}"></i> {{ message|trans }}
+    </button>
+{% endmacro %}
+
+{% macro cancel(url = null) %}
+    {% import _self as buttons %}
+
+    {% if url is null %}
+        {% set url = app.request.headers.get('referer') %}
+    {% endif %}
+
+    {{ buttons.default(url, 'sylius.ui.cancel', 'cancel-changes-button', 'arrow-left', 'btn btn-outline-secondary') }}
+{% endmacro %}
+
+{% macro filter(message) %}
+    <button class="btn btn-outline-primary" type="submit">
+        <i class="bi bi-search"></i> {{ (message is empty ? 'sylius.ui.filter' : message)|trans }}
+    </button>
+{% endmacro %}
+
+{% macro resetFilters(url, message) %}
+    <a class="btn btn-outline-secondary" href="{{ url }}" role="button">
+        <i class="bi bi-x-lg"></i> {{ (message is empty ? 'sylius.ui.clear_filters' : message)|trans }}
+    </a>
+{% endmacro %}

@@ -1,0 +1,23 @@
+{% macro default(crumbs = {}, divider, root_path, root_label) %}
+    {% set separator %}
+        {% if divider is not null %}
+            style="--bs-breadcrumb-divider: '{{ divider }}';"
+        {% endif %}
+    {% endset %}
+
+    <nav {{ separator }} aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            {% for crumb in crumbs %}
+                {% if loop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ crumb.label|raw }}</li>
+                {% elseif crumb.url is defined %}
+                    <li class="breadcrumb-item"><a href="{{ crumb.url }}" class="text-decoration-pseudo">{{ crumb.label }}</a></li>
+                {% else %}
+                    <li class="breadcrumb-item"><a href="#" class="text-decoration-pseudo">{{ crumb.label }}</a></li>
+                {% endif %}
+            {% else %}
+                <li class="breadcrumb-item"><a href="{{ root_path|default('/') }}" class="text-decoration-pseudo">{{ root_label|default('sylius.ui.root'|trans) }}</a></li>
+            {% endfor %}
+        </ol>
+    </nav>
+{% endmacro %}

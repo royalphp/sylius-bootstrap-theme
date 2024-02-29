@@ -1,0 +1,14 @@
+{% form_theme form '@SyliusShop/Form/theme.html.twig' %}
+
+<div class="col-auto">
+    <div class="row bg-body-tertiary rounded shadow px-2 pt-2 g-2">
+        {% if form.type is defined %}
+            <div class="col">
+                {{ form_row(form.type, {'label': filter.label}) }}
+            </div>
+        {% endif %}
+        <div class="col">
+            {{ form_row(form.value, {attr: {placeholder: form.value.vars.label}, 'label': form.type is defined ? form.value.vars.label : filter.label}) }}
+        </div>
+    </div>
+</div>

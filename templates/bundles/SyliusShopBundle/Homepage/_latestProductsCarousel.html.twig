@@ -1,0 +1,9 @@
+{% import '@SyliusShop/Common/Macro/headers.html.twig' as headers %}
+
+<div class="row justify-content-center my-4">
+    <div class="col-auto">
+        {{ headers.caption('sylius.homepage.carousel_header'|trans, 'chevron-right') }}
+    </div>
+</div>
+
+{{ render(url('sylius_shop_partial_product_index_latest', {'count': 4, 'template': '@SyliusShop/Homepage/_carousel.html.twig'})) }}

@@ -1,0 +1,37 @@
+<div class="row row-cols-1 row-cols-lg-2">
+    <div class="col">
+        <h4>{{ 'sylius.ui.personal_information'|trans }}</h4>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.firstName, sylius_test_form_attribute('first-name')) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.lastName, sylius_test_form_attribute('last-name')) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            {{ form_row(form.email, sylius_test_form_attribute('email')) }}
+        </div>
+        <div class="col-12">
+            {{ form_row(form.phoneNumber, sylius_test_form_attribute('phone-number')) }}
+        </div>
+        <div class="col-12">
+            {{ form_row(form.subscribedToNewsletter, sylius_test_form_attribute('subscribed-to-newsletter')|merge({
+                label_attr: {
+                    class: 'checkbox-switch'
+                }
+            })) }}
+        </div>
+    </div>
+    <div class="col">
+        <h4>{{ 'sylius.ui.account_credentials'|trans }}</h4>
+        <div class="col-12">
+            {{ form_row(form.user.plainPassword.first, sylius_test_form_attribute('password-first')) }}
+        </div>
+        <div class="col-12">
+            {{ form_row(form.user.plainPassword.second, sylius_test_form_attribute('password-second')) }}
+        </div>
+    </div>
+</div>

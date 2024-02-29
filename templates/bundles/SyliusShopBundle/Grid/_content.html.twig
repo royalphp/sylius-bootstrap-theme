@@ -1,0 +1,17 @@
+{% set definition = grid.definition %}
+{% set data = grid.data %}
+
+{% set path = path(app.request.attributes.get('_route'), app.request.attributes.all('_route_params')) %}
+{% set criteria = app.request.query.all('criteria') %}
+
+<div class="row">
+    <div class="col">
+        {{ sylius_template_event('theme.bootstrap.sylius.grid.filters', _context) }}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        {{ sylius_template_event('theme.bootstrap.sylius.grid.body', _context) }}
+    </div>
+</div>

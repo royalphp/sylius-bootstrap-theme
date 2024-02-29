@@ -1,0 +1,9 @@
+// This is pretty useful in giving a visual indication to the user when a form field is required.
+.col-form-label.required,
+.form-label.required {
+  &::after {
+    color: var(--bs-red);
+    content: "*";
+    @extend .ms-1;
+  }
+}

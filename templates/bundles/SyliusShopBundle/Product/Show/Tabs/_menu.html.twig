@@ -1,0 +1,13 @@
+<ul class="nav nav-tabs" id="productInformation" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">{{ 'sylius.ui.details'|trans }}</button>
+    </li>
+{% if product.attributes|length > 0 %}
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="attributes-tab" data-bs-toggle="tab" data-bs-target="#attributes" type="button" role="tab" aria-controls="attributes" aria-selected="false" {{ sylius_test_html_attribute('tab', 'attributes') }}>{{ 'sylius.ui.attributes'|trans }}</button>
+    </li>
+{% endif %}
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">{{ 'sylius.ui.reviews'|trans }} ({{ product.acceptedReviews|length }})</button>
+    </li>
+</ul>

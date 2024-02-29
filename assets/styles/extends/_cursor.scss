@@ -1,0 +1,14 @@
+$utilities: map-merge(
+  $utilities,
+  (
+    "cursor": (
+      property: cursor,
+      values: (
+        help: help,
+        wait: wait,
+        grab: grab,
+        not-allowed: not-allowed,
+      ),
+    ),
+  ),
+);

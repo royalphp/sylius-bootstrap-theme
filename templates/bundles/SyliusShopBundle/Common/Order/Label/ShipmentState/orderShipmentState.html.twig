@@ -1,0 +1,13 @@
+{% set value = 'sylius.ui.' ~ state %}
+{% set viewOptions = {
+    cart: {'icon': 'clock-history', 'color': 'info'},
+    ready: {'icon': 'clock-history', 'color': 'info'},
+    cancelled: {'icon': 'x-circle', 'color': 'warning'},
+    shipped: {'icon': 'check-circle', 'color': 'success'},
+    partially_shipped: {'icon': 'circle-half', 'color': 'warning'},
+} %}
+
+<div class="card-header bg-transparent border-{{ viewOptions[state]['color'] }}">
+    <i class="bi bi-{{ viewOptions[state]['icon'] }}"></i>
+    {{ 'sylius.ui.state'|trans }}: <span id="order-shipment-status" {{ sylius_test_html_attribute('order-shipment-state') }}>{{ value|trans }}</span>
+</div>

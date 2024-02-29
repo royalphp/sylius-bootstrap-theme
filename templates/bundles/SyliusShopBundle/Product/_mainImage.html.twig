@@ -1,0 +1,14 @@
+{% if product.imagesByType('thumbnail') is not empty %}
+    {% set path = product.imagesByType('thumbnail').first.path|imagine_filter(filter|default('sylius_shop_product_thumbnail')) %}
+{% elseif product.images.first %}
+    {% set path = product.images.first.path|imagine_filter(filter|default('sylius_shop_product_thumbnail')) %}
+{% else %}
+    {% set path = use_webpack ? asset('build/shop/images/200x200.png', 'shop') : asset('assets/shop/img/200x200.png') %}
+{% endif %}
+
+<img
+    src="{{ path }}"
+    class="{{ is_card ? 'card-img-top' : 'img-fluid rounded'}}"
+    alt="{{ product.name }}"
+    {{ sylius_test_html_attribute('main-image') }}
+/>

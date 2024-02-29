@@ -1,0 +1,54 @@
+{% macro simple(inner, controls = false) %}
+    <div id="carouselSimple" class="carousel slide" data-bs-ride="true">
+        <div class="carousel-inner">
+            {{ inner }}
+        </div>
+        {% if (controls) %}
+            {{ _self._controls('#carouselSimple') }}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro single(url, alt = null) %}
+    <div id="carouselSingleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img class="d-block w-100" src="{{ url }}" {% if alt %} alt="{{ alt }}" {% endif %}>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro multiple(items) %}
+    <div id="carouselMultipleIndicators" class="carousel slide" data-bs-ride="true">
+        <div class="carousel-indicators">
+            {% for item in items %}
+                <button type="button"
+                        data-bs-target="#carouselMultipleIndicators"
+                        data-bs-slide-to="{{ loop.index0 }}"
+                        aria-label="Slide {{ loop.index }}"
+                        {% if loop.first %} class="active" aria-current="true" {% endif %}
+                ></button>
+            {% endfor %}
+        </div>
+        <div class="carousel-inner">
+            {% for item in items %}
+                <div class="carousel-item {{ loop.first ? 'active' }}">
+                    <img class="d-block w-100" src="{{ item.url }}" {% if item.alt %} alt="{{ item.alt }}" {% endif %}>
+                </div>
+            {% endfor %}
+        </div>
+        {{ _self._controls('#carouselMultipleIndicators') }}
+    </div>
+{% endmacro %}
+
+{% macro _controls(target) %}
+    <button class="carousel-control-prev" type="button" data-bs-target="{{ target }}" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">{{ 'theme.bootstrap.sylius.homepage.carousel_control_prev'|trans }}</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="{{ target }}" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">{{ 'theme.bootstrap.sylius.homepage.carousel_control_next'|trans }}</span>
+    </button>
+{% endmacro %}

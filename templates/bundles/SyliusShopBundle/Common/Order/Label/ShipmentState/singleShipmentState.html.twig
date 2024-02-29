@@ -1,0 +1,11 @@
+{% import '@SyliusShop/Common/Macro/labels.html.twig' as labels %}
+
+{% set value = 'sylius.ui.' ~ state %}
+{% set viewOptions = {
+    cart: {'icon': 'circle-half', 'color': 'info'},
+    ready: {'icon': 'clock-history', 'color': 'info'},
+    cancelled: {'icon': 'x-circle', 'color': 'warning'},
+    shipped: {'icon': 'check-circle', 'color': 'success'},
+} %}
+
+{{ labels.subtle(viewOptions[state]['color'], value, viewOptions[state]['icon']) }}

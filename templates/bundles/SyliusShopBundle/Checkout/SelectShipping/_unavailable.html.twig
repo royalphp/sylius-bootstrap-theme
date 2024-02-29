@@ -1,0 +1,5 @@
+{% import '@SyliusShop/Common/Macro/messages.html.twig' as messages %}
+
+<div {{ sylius_test_html_attribute('order-cannot-be-shipped') }}>
+    {{ messages.warning('sylius.ui.no_shipping_methods_available'|trans) }}
+</div>

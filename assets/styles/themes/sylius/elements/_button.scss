@@ -1,0 +1,11 @@
+.btn-sylius {
+  @extend .text-white;
+}
+
+.btn-outline-sylius {
+  &:active,
+  &:focus-visible,
+  &:hover {
+    @extend .text-white;
+  }
+}

@@ -1,0 +1,26 @@
+@import "~bootstrap/scss/functions";
+
+@import "./variables/sylius";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/variables-dark";
+
+@import "./maps/sylius";
+@import "~bootstrap/scss/maps";
+
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+@import "./extends/cursor";
+@import "./extends/size";
+
+@import "./vendors/bootstrap/components";
+@import "~bootstrap-icons/font/bootstrap-icons";
+@import "~flag-icons/sass/flag-icons";
+@import "~tom-select/dist/css/tom-select.css";
+@import "~tom-select/dist/css/tom-select.bootstrap5.css";
+
+@import "./themes/common/base";
+@import "./themes/common/form";
+@import "./themes/common/icon";
+@import "./themes/sylius/elements/button";
+@import "./themes/sylius/layout/footer";
+@import "./vendors/tom-select/dark-mode";

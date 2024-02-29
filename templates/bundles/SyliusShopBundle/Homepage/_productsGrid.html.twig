@@ -1,0 +1,8 @@
+<div class="row row-cols-1 row-cols-md-2 g-3">
+    {{ render(url('sylius_shop_partial_product_index_latest', {'count': 1, 'template': '@SyliusShop/Homepage/_list.html.twig'})) }}
+    <div class="col">
+        <div class="row row-cols-1 row-cols-md-2 g-3">
+            {{ render(url('sylius_shop_partial_product_index_latest', {'count': 4, 'template': '@SyliusShop/Homepage/_list.html.twig'})) }}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,178 @@
+{% if active is not defined or active == 'address' %}
+    {% set steps = {
+        'address': {
+            'body': '',
+            'icon': 'bi-map',
+            'link': 'stretched-link',
+        },
+        'select_shipping': {
+            'body': 'opacity-50 cursor-not-allowed',
+            'icon': 'bi-truck',
+            'link': '',
+        },
+        'select_payment': {
+            'body': 'opacity-50 cursor-not-allowed',
+            'icon': 'bi-credit-card-2-front',
+            'link': '',
+        },
+        'complete': {
+            'body': 'opacity-50 cursor-not-allowed',
+            'icon': 'bi-flag',
+            'link': '',
+        },
+    } %}
+{% elseif active == 'select_shipping' %}
+    {% set steps = {
+        'address': {
+            'body': '',
+            'icon': 'bi-check-lg text-sylius',
+            'link': 'stretched-link',
+        },
+        'select_shipping': {
+            'body': '',
+            'icon': 'bi-truck',
+            'link': 'stretched-link',
+        },
+        'select_payment': {
+            'body': 'opacity-50 cursor-not-allowed',
+            'icon': 'bi-credit-card-2-front',
+            'link': '',
+        },
+        'complete': {
+            'body': 'opacity-50 cursor-not-allowed',
+            'icon': 'bi-flag',
+            'link': '',
+        },
+    } %}
+{% elseif active == 'select_payment' %}
+    {% set steps = {
+        'address': {
+            'body': '',
+            'icon': 'bi-check-lg text-sylius',
+            'link': 'stretched-link',
+        },
+        'select_shipping': {
+            'body': '',
+            'icon': 'bi-check-lg text-sylius',
+            'link': 'stretched-link',
+        },
+        'select_payment': {
+            'body': '',
+            'icon': 'bi-credit-card-2-front',
+            'link': 'stretched-link',
+        },
+        'complete': {
+            'body': 'opacity-50 cursor-not-allowed',
+            'icon': 'bi-flag',
+            'link': '',
+        },
+    } %}
+{% else %}
+    {% set steps = {
+        'address': {
+            'body': '',
+            'icon': 'bi-check-lg text-sylius',
+            'link': 'stretched-link',
+        },
+        'select_shipping': {
+            'body': '',
+            'icon': 'bi-check-lg text-sylius',
+            'link': 'stretched-link',
+        },
+        'select_payment': {
+            'body': '',
+            'icon': 'bi-check-lg text-sylius',
+            'link': 'stretched-link',
+        },
+        'complete': {
+            'body': '',
+            'icon': 'bi-flag',
+            'link': 'stretched-link',
+        },
+    } %}
+{% endif %}
+
+{% set order_requires_payment = sylius_is_payment_required(order) %}
+{% set order_requires_shipping = sylius_is_shipping_required(order) %}
+
+{% set steps_count = 'four' %}
+{% if not order_requires_payment and not order_requires_shipping %}
+    {% set steps_count = 'two' %}
+{% elseif not order_requires_payment or not order_requires_shipping %}
+    {% set steps_count = 'three' %}
+{% endif %}
+
+<div class="row mt-5">
+    <div class="col">
+        <div class="card-group {{ steps_count }}">
+            <div class="card {{ steps['address']['body'] }}">
+                <div class="card-body">
+                    <div class="row align-items-center g-3">
+                        <div class="col-3 col-sm-12 col-lg-4">
+                            <div class="display-4 text-center">
+                                <i class="bi {{ steps['address']['icon'] }}"></i>
+                            </div>
+                        </div>
+                        <div class="col-9 col-sm-12 col-lg-8">
+                            <h5 class="card-title text-sylius">{{ 'sylius.ui.address'|trans }}</h5>
+                            <p class="card-text">{{ 'sylius.ui.fill_in_your_billing_and_shipping_addresses'|trans }}</p>
+                        </div>
+                    </div>
+                    <a class="{{ steps['address']['link'] }}" href="{{ path('sylius_shop_checkout_address') }}" {{ sylius_test_html_attribute('step-address') }}></a>
+                </div>
+            </div>
+            {% if order_requires_shipping %}
+                <div class="card {{ steps['select_shipping']['body'] }}">
+                    <div class="card-body">
+                        <div class="row align-items-center g-3">
+                            <div class="col-3 col-sm-12 col-lg-4">
+                                <div class="display-4 text-center">
+                                    <i class="bi {{ steps['select_shipping']['icon'] }}"></i>
+                                </div>
+                            </div>
+                            <div class="col-9 col-sm-12 col-lg-8">
+                                <h5 class="card-title text-sylius">{{ 'sylius.ui.shipping'|trans }}</h5>
+                                <p class="card-text">{{ 'sylius.ui.choose_how_your_goods_will_be_delivered'|trans }}</p>
+                            </div>
+                        </div>
+                        <a class="{{ steps['select_shipping']['link'] }}" href="{{ path('sylius_shop_checkout_select_shipping') }}" {{ sylius_test_html_attribute('step-shipping') }}></a>
+                    </div>
+                </div>
+            {% endif %}
+            {% if order_requires_payment %}
+                <div class="card {{ steps['select_payment']['body'] }}">
+                    <div class="card-body">
+                        <div class="row align-items-center g-3">
+                            <div class="col-3 col-sm-12 col-lg-4">
+                                <div class="display-4 text-center">
+                                    <i class="bi {{ steps['select_payment']['icon'] }}"></i>
+                                </div>
+                            </div>
+                            <div class="col-9 col-sm-12 col-lg-8">
+                                <h5 class="card-title text-sylius">{{ 'sylius.ui.payment'|trans }}</h5>
+                                <p class="card-text">{{ 'sylius.ui.choose_how_you_will_pay'|trans }}</p>
+                            </div>
+                        </div>
+                        <a class="{{ steps['select_payment']['link'] }}" href="{{ path('sylius_shop_checkout_select_payment') }}" {{ sylius_test_html_attribute('step-payment') }}></a>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="card {{ steps['complete']['body'] }}">
+                <div class="card-body">
+                    <div class="row align-items-center g-3">
+                        <div class="col-3 col-sm-12 col-lg-4">
+                            <div class="display-4 text-center">
+                                <i class="bi {{ steps['complete']['icon'] }}"></i>
+                            </div>
+                        </div>
+                        <div class="col-9 col-sm-12 col-lg-8">
+                            <h5 class="card-title text-sylius">{{ 'sylius.ui.complete'|trans }}</h5>
+                            <p class="card-text">{{ 'sylius.ui.review_and_confirm_your_order'|trans }}</p>
+                        </div>
+                        <a class="{{ steps['complete']['link'] }}" href="{{ path('sylius_shop_checkout_complete') }}"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

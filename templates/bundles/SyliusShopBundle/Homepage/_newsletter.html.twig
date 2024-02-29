@@ -1,0 +1,16 @@
+{% import '@SyliusShop/Common/Macro/headers.html.twig' as headers %}
+
+<div class="row justify-content-center bg-body-tertiary rounded my-5 py-5">
+    <div class="col-10 col-md-9">
+        <div class="text-center">
+            {{ headers.caption('sylius.homepage.newsletter'|trans, 'chevron-right') }}
+            <p class="fst-italic lh-lg text-body-secondary">{{ 'sylius.homepage.newsletter_description'|trans|raw }}</p>
+        </div>
+    </div>
+    <div class="col-10 col-md-6">
+        <div class="input-group mb-3">
+            <input type="email" class="form-control" placeholder="{{ 'sylius.ui.email'|trans }}" aria-label="{{ 'sylius.ui.email'|trans }}" aria-describedby="button-subscribe">
+            <button class="btn btn-outline-secondary" type="button" id="button-subscribe">{{ 'sylius.homepage.subscribe'|trans }}</button>
+        </div>
+    </div>
+</div>

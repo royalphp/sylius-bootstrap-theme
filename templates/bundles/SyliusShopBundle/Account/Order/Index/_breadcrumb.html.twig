@@ -1,0 +1,7 @@
+{% import '@SyliusShop/Common/Macro/breadcrumbs.html.twig' as breadcrumbs %}
+
+{{ breadcrumbs.default({
+    homepage: {label: 'sylius.ui.home'|trans, url: path('sylius_shop_homepage')},
+    account_dashboard: {label: 'sylius.ui.my_account'|trans, url: path('sylius_shop_account_dashboard')},
+    account_order_history: {label: 'sylius.ui.order_history'|trans}
+}) }}

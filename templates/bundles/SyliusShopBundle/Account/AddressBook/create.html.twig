@@ -1,0 +1,39 @@
+{% extends '@SyliusShop/Account/AddressBook/layout.html.twig' %}
+
+{% import '@SyliusShop/Common/Macro/headers.html.twig' as headers %}
+
+{% form_theme form '@SyliusShop/Form/theme.html.twig' %}
+
+{% block title %}{{ 'sylius.ui.add_address'|trans }} | {{ parent() }}{% endblock %}
+
+{% block subcontent %}
+    {{ headers.default('sylius.ui.address_book'|trans, null, 'sylius.ui.add_address'|trans) }}
+
+    {{ sylius_template_event('sylius.shop.account.address_book.create.after_content_header', {'address': address}) }}
+
+    <div class="row">
+        {{ form_start(form, {'action': path('sylius_shop_account_address_book_create'), 'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            {% include '@SyliusShop/Common/Form/_address.html.twig' with {'form': form} %}
+
+            <div class="col-12">
+                <div class="row justify-content-between">
+                    <div class="col-auto">
+                        <a href="{{ path('sylius_shop_account_address_book_index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> {{ 'sylius.ui.cancel'|trans }}
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-outline-sylius" {{ sylius_test_html_attribute('add-address') }}>
+                            <i class="bi bi-plus-square"></i> {{ 'sylius.ui.add'|trans }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        {{ sylius_template_event('sylius.shop.account.address_book.create.form', {'address': address}) }}
+
+        {{ form_row(form._token) }}
+        {{ form_end(form, {'render_rest': false}) }}
+    </div>
+{% endblock %}

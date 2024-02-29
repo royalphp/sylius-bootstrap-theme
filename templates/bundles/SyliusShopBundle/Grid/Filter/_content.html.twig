@@ -1,0 +1,30 @@
+{% import '@SyliusShop/Common/Macro/buttons.html.twig' as buttons %}
+
+{% if definition.enabledFilters|length > 0 %}
+    <div class="accordion mb-3" id="accordionFilters">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="true" aria-controls="collapseFilter">
+                    <i class="bi bi-funnel me-1"></i>{{ 'sylius.ui.filters'|trans }}
+                </button>
+            </h2>
+            <div id="collapseFilter" class="accordion-collapse collapse {% if criteria is not null %}show{% endif %}" data-bs-parent="#accordionFilters">
+                <div class="accordion-body">
+                    <form method="get" action="{{ path }}" novalidate>
+                        <div class="row justify-content-start mb-3 g-3">
+                            {% for filter in definition.enabledFilters|filter(filter => filter.enabled)|sort_by('position') %}
+                                {{ sylius_grid_render_filter(grid, filter) }}
+                            {% endfor %}
+                        </div>
+                        <div class="row justify-content-end">
+                            <div class="col-auto">
+                                {{ buttons.filter() }}
+                                {{ buttons.resetFilters(path) }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

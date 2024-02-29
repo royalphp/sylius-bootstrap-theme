@@ -1,0 +1,9 @@
+@import "./default";
+
+// Create your own map
+$custom-colors: (
+  "sylius": $sylius-primary,
+);
+
+// Merge the maps
+$theme-colors: map-merge($theme-colors, $custom-colors);

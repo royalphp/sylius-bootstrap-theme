@@ -1,0 +1,36 @@
+<li class="nav-item dropdown color-modes">
+    <button
+        class="btn btn-link link-light text-decoration-none dropdown-toggle d-flex align-items-center"
+        id="bd-theme"
+        type="button"
+        aria-expanded="false"
+        data-bs-toggle="dropdown"
+        data-bs-display="static"
+    >
+        <svg class="bi my-1 theme-icon-active"><use href="#circle-half"></use></svg>
+        <span class="d-none d-sm-inline ms-2" id="bd-theme-text">{{ 'theme.bootstrap.sylius.ui.color_mode.toggle'|trans }}</span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="bd-theme">
+        <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+                <svg class="bi me-2 opacity-50 theme-icon"><use href="#sun-fill"></use></svg>
+                {{ 'theme.bootstrap.sylius.ui.color_mode.scheme.light'|trans }}
+                <svg class="bi ms-auto d-none"><use href="#check2"></use></svg>
+            </button>
+        </li>
+        <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+                <svg class="bi me-2 opacity-50 theme-icon"><use href="#moon-stars-fill"></use></svg>
+                {{ 'theme.bootstrap.sylius.ui.color_mode.scheme.dark'|trans }}
+                <svg class="bi ms-auto d-none"><use href="#check2"></use></svg>
+            </button>
+        </li>
+        <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto">
+                <svg class="bi me-2 opacity-50 theme-icon"><use href="#circle-half"></use></svg>
+                {{ 'theme.bootstrap.sylius.ui.color_mode.scheme.auto'|trans }}
+                <svg class="bi ms-auto d-none"><use href="#check2"></use></svg>
+            </button>
+        </li>
+    </ul>
+</li>

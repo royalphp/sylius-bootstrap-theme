@@ -1,0 +1,11 @@
+{% form_theme form '@SyliusShop/Form/theme.html.twig' %}
+
+<div class="mb-3">
+    {{ form_label(form) }}
+
+    {% if form.vars.choices is defined %}
+        {{ form_widget(form, sylius_test_form_attribute('province-code')) }}
+    {% else %}
+        {{ form_widget(form, sylius_test_form_attribute('province-name')) }}
+    {% endif %}
+</div>

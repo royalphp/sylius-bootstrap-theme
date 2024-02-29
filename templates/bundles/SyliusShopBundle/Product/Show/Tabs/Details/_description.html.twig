@@ -1,0 +1,5 @@
+{% if product.description is not empty %}
+    <p class="lead my-3">{{ product.description | nl2br }}</p>
+{% else %}
+    <p class="lead my-3">{{ 'sylius.ui.no_description'|trans }}.</p>
+{% endif %}

@@ -1,0 +1,15 @@
+{% import '@SyliusShop/Common/Macro/labels.html.twig' as labels %}
+
+<div class="{{ withDescription ? 'vstack' : 'hstack' }} flex-wrap gap-1" id="appliedPromotions" data-applied-promotions-locale="{{ sylius.localeCode }}">
+    {% for appliedPromotion in appliedPromotions %}
+        {% if appliedPromotion.description is not empty and withDescription == true %}
+            {% set descAsTags = '<span class="text-sylius">%s</span>'|format(appliedPromotion.description) %}
+        {% elseif appliedPromotion.description is not empty and withDescription == false %}
+            {% set descAsAttr = 'data-bs-toggle="tooltip" data-bs-title="%s"'|format(appliedPromotion.description) %}
+        {% endif %}
+        <div class="promotion_label">
+            {{ labels.subtle('primary', appliedPromotion.label, null, 'sylius_catalog_promotion', descAsAttr is defined ? descAsAttr) }}
+            {{ descAsTags is defined ? descAsTags|raw }}
+        </div>
+    {% endfor %}
+</div>

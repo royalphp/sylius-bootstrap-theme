@@ -1,0 +1,46 @@
+{% macro item(taxon, dropdown) %}
+    {% import _self as macros %}
+
+    {% if taxon.enabledChildren|length > 0 %}
+        <li class="nav-item dropdown" {{ sylius_test_html_attribute('menu-item') }}>
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ taxon.name }}
+            </a>
+            <ul class="dropdown-menu">
+                {% for childTaxon in taxon.enabledChildren %}
+                    {{ macros.item(childTaxon, true) }}
+                {% endfor %}
+            </ul>
+        </li>
+    {% else %}
+        <li class="{{ (dropdown) ? '' : 'nav-item' }}">
+            <a href="{{ path('sylius_shop_product_index', {'slug': taxon.slug, '_locale': taxon.translation.locale}) }}" class="{{ (dropdown) ? 'dropdown-item' : 'nav-link' }}" {{ sylius_test_html_attribute('menu-item') }}>{{ taxon.name }}</a>
+        </li>
+    {% endif %}
+{% endmacro %}
+
+{% import _self as macros %}
+
+{% if taxons|length > 0 %}
+    <nav class="navbar navbar-expand-sm bg-body-tertiary" aria-label="Offcanvas navbar large">
+        <div class="container">
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbarMainMenu" aria-labelledby="offcanvasNavbarMainMenuLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarMainMenuLabel">{{ 'theme.bootstrap.sylius.layout.taxon_horizontal_menu'|trans }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body justify-content-sm-center">
+                    <ul class="navbar-nav" {{ sylius_test_html_attribute('menu') }}>
+                        {% for taxon in taxons %}
+                            {{ macros.item(taxon) }}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarMainMenu" aria-controls="offcanvasNavbarMainMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand d-block d-sm-none" href="#">{{ 'theme.bootstrap.sylius.layout.taxon_horizontal_menu'|trans }}</a>
+        </div>
+    </nav>
+{% endif %}

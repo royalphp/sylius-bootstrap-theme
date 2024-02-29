@@ -1,0 +1,30 @@
+{% set state = order.shippingState %}
+
+<div class="card">
+    {% if state != 'cart' %}
+        {% include "@SyliusShop/Common/Order/Label/ShipmentState/orderShipmentState.html.twig" %}
+    {% endif %}
+    <div class="card-body" id="sylius-shipments">
+        {% for shipment in order.shipments %}
+            {% set state = shipment.state %}
+
+            <div class="row align-items-center">
+                <div class="col-3">
+                    <div class="display-4 text-center">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                </div>
+                <div class="col-9">
+                    <p class="fw-bold" id="sylius-shipping-method" {{ sylius_test_html_attribute('shipping-method') }}>
+                        {{ shipment.method }}
+                    </p>
+                    {% if state != 'cart' %}
+                        <p class="mb-0" id="shipment-status" {{ sylius_test_html_attribute('shipment-state') }}>
+                            {% include "@SyliusShop/Common/Order/Label/ShipmentState/singleShipmentState.html.twig" with { 'state': state } %}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

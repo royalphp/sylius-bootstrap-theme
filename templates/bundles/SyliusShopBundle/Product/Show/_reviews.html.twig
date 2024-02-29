@@ -1,0 +1,11 @@
+<div class="row mb-3">
+    <div class="col-auto">
+        {% include '@SyliusShop/Product/_starRating.html.twig' %}
+    </div>
+    <div class="col-auto">
+        <a href="{{ path('sylius_shop_product_review_index', {'slug': product.slug, '_locale': product.translation.locale}) }}" class="link-sylius text-decoration-pseudo">{{ product.acceptedReviews|length }} {{ 'sylius.ui.reviews'|trans }}</a>
+    </div>
+    <div class="col-auto">
+        <a href="{{ path('sylius_shop_product_review_create', {'slug': product.slug, '_locale': product.translation.locale}) }}" class="link-sylius text-decoration-pseudo">{{ 'sylius.ui.add_your_review'|trans }}</a>
+    </div>
+</div>

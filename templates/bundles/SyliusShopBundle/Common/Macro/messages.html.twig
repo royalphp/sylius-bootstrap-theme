@@ -1,0 +1,32 @@
+{% macro default(message, icon, type, header) %}
+    <div class="alert alert-{{ type|default('') }} alert-dismissible d-flex align-items-center" role="alert" {{ sylius_test_html_attribute('flash-message', type) }}>
+        <i class="bi bi-{{ icon }} flex-shrink-0 display-4 me-3"></i>
+        <div>
+            {% if type is not empty %}
+                <p class="fw-bold fs-4 mb-0">{{ header|default(type)|trans }}</p>
+            {% endif %}
+            <p class="lead mb-0">{{ message }}</p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endmacro %}
+
+{% macro info(message) %}
+    {% import _self as messages %}
+    {{ messages.default(message, 'info-circle', 'info', 'sylius.ui.info') }}
+{% endmacro %}
+
+{% macro success(message) %}
+    {% import _self as messages %}
+    {{ messages.default(message, 'check-circle', 'success', 'sylius.ui.success') }}
+{% endmacro %}
+
+{% macro error(message) %}
+    {% import _self as messages %}
+    {{ messages.default(message, 'exclamation-triangle', 'danger', 'sylius.ui.error') }}
+{% endmacro %}
+
+{% macro warning(message) %}
+    {% import _self as messages %}
+    {{ messages.default(message, 'exclamation-circle', 'warning', 'sylius.ui.warning') }}
+{% endmacro %}

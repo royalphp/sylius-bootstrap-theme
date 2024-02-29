@@ -1,0 +1,22 @@
+{% extends '@SyliusShop/layout.html.twig' %}
+
+{% block title %}{{ product.name }} | {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="row mt-3">
+        <div class="col">
+            {% include '@SyliusShop/Product/Show/_breadcrumb.html.twig' %}
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-7">
+            {{ sylius_template_event('sylius.shop.product.show.left_sidebar', _context) }}
+        </div>
+        <div class="col-md-5" {{ sylius_test_html_attribute('product-box') }}>
+            {{ sylius_template_event('sylius.shop.product.show.right_sidebar', _context) }}
+        </div>
+    </div>
+
+    {{ sylius_template_event('sylius.shop.product.show.content', _context) }}
+{% endblock %}

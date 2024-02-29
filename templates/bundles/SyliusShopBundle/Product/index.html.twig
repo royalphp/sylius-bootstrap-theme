@@ -1,0 +1,17 @@
+{% extends '@SyliusShop/layout.html.twig' %}
+
+{% block content %}
+    <div class="row mt-3">
+        <div class="col">
+            {% include '@SyliusShop/Product/Index/_header.html.twig' %}
+        </div>
+    </div>
+    <div class="row mb-3 g-3">
+        <div class="col-md-3">
+            {% include '@SyliusShop/Product/Index/_sidebar.html.twig' %}
+        </div>
+        <div class="col-md-9">
+            {% include '@SyliusShop/Product/Index/_main.html.twig' %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% if locales|length > 1 %}
+    <li class="nav-item dropdown" {{ sylius_test_html_attribute('locale-selector') }}>
+        <a class="nav-link link-light dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false" {{ sylius_test_html_attribute('active-locale') }}>{{ active|sylius_locale_name }}</a>
+        <ul class="dropdown-menu">
+            {% for code in locales %}
+                {% if code is not same as(active) %}
+                    <li>
+                        <a href="{{ path('sylius_shop_switch_locale', {'code': code}) }}" class="dropdown-item sylius-available-locale" {{ sylius_test_html_attribute('available-locale') }}>
+                            {{ code|sylius_locale_name }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </li>
+{% endif %}

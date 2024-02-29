@@ -1,0 +1,18 @@
+{% if is_granted('ROLE_USER') %}
+    <li class="nav-item" {{ sylius_test_html_attribute('full-name') }}>
+        <a href="#" class="nav-link link-light">{{ 'sylius.ui.hello'|trans }} {{ app.user.customer.fullName }}!</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ path('sylius_shop_account_dashboard') }}" class="nav-link link-light">{{ 'sylius.ui.my_account'|trans }}</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ path('sylius_shop_logout') }}" class="nav-link link-light sylius-logout-button" {{ sylius_test_html_attribute('logout-button') }}>{{ 'sylius.ui.logout'|trans }}</a>
+    </li>
+{% else %}
+    <li class="nav-item">
+        <a href="{{ path('sylius_shop_login') }}" class="nav-link link-light">{{ 'sylius.ui.login'|trans }}</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ path('sylius_shop_register') }}" class="nav-link link-light">{{ 'sylius.ui.register'|trans }}</a>
+    </li>
+{% endif %}

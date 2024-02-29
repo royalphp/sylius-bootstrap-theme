@@ -1,0 +1,15 @@
+<div class="row mt-4">
+    <div class="col">
+        <div class="card">
+            <img src="{{ use_webpack ? asset('build/shop/images/homepage-banner.jpg', 'shop') : asset('assets/shop/img/homepage-banner.jpg') }}" alt="{{ 'sylius.homepage.banner_content'|trans }}" class="card-img">
+            <div class="card-img-overlay d-flex text-white">
+                <div class="row align-items-end">
+                    <div class="col-auto">
+                        <h1 class="card-title">{{ 'sylius.homepage.banner_content'|trans }}</h1>
+                        <p><a href="#" class="card-link link-sylius">{{ 'sylius.homepage.banner_button'|trans }}</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

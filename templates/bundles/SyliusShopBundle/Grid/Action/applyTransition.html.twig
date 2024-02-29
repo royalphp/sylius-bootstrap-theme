@@ -1,0 +1,10 @@
+{% if sm_can(data, options.transition, options.graph) %}
+    <form action="{{ path(options.link.route, options.link.parameters) }}" method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token(data.id) }}">
+        <input type="hidden" name="_method" value="PUT">
+        <button class="btn btn-outline-info btn-sm {{ options.class|default }}" type="submit" data-js-disable=".sylius-grid-table-wrapper button, .sylius-grid-table-wrapper a">
+            <i class="bi bi-{{ action.icon }}"></i>
+            {{ action.label|trans }}
+        </button>
+    </form>
+{% endif %}

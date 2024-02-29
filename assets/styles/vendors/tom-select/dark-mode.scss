@@ -1,0 +1,7 @@
+.ts-wrapper .ts-control,
+.ts-wrapper.single .ts-control,
+.ts-wrapper.single.input-active .ts-control,
+.full .ts-control,
+.ts-dropdown {
+  @extend .text-body-emphasis;
+}

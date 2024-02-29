@@ -1,0 +1,6 @@
+{{ form_start(form, {'action': path('sylius_shop_cart_save'), 'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'id': form.vars.id}}) }}
+    {{ form_errors(form) }}
+    {{ form_row(form._token) }}
+    <input type="hidden" name="_method" value="PATCH"/>
+    <button type="submit" class="btn btn-outline-sylius" id="sylius-cart-update" {{ sylius_test_html_attribute('cart-update-button') }} form="{{ main_form }}"><i class="bi bi-arrow-repeat"></i> {{ 'sylius.ui.update_cart'|trans }}</button>
+{{ form_end(form, {'render_rest': false}) }}

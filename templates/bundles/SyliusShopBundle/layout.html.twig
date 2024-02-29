@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html lang="{{ app.request.locale|slice(0, 2) }}" data-bs-theme="auto">
+<head>
+    <meta charset="utf-8">
+
+    <title>{% block title %}{{ sylius.channel.name }}{% endblock %}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% block metatags %}
+    {% endblock %}
+
+    {% block stylesheets %}
+        {{ sylius_template_event('sylius.shop.layout.stylesheets') }}
+    {% endblock %}
+
+    {{ sylius_template_event('sylius.shop.layout.head') }}
+</head>
+<body>
+    {{ sylius_template_event('sylius.shop.layout.before_body') }}
+    <div class="wrapper">
+        <header class="header">
+            {% block header %}
+                {% block top %}
+                    <nav class="navbar bg-sylius py-0" data-route="{{ app.request.get('_route') }}">
+                        <div class="container">
+                            <ul class="nav">
+                                <li class="nav-item">
+                                    <a class="nav-link link-light text-decoration-pseudo" href="#">{{ 'sylius.top_bar'|trans }}</a>
+                                </li>
+                            </ul>
+                            <ul class="nav">
+                                {% include '@SyliusShop/Menu/_colorSwitcher.html.twig' %}
+                                {{ sylius_template_event('sylius.shop.layout.topbar') }}
+                            </ul>
+                        </div>
+                    </nav>
+                {% endblock %}
+                {{ sylius_template_event('sylius.shop.layout.header') }}
+            {% endblock %}
+        </header>
+        <main class="container">
+            {{ sylius_template_event('sylius.shop.layout.before_content') }}
+
+            {% block content %}
+            {% endblock %}
+
+            {{ sylius_template_event('sylius.shop.layout.after_content') }}
+        </main>
+        <footer class="footer">
+            {% block footer %}
+                {% include '@SyliusShop/_footer.html.twig' %}
+            {% endblock %}
+        </footer>
+    </div>
+
+    {% block javascripts %}
+        {{ sylius_template_event('sylius.shop.layout.javascripts') }}
+    {% endblock %}
+
+    {% include '@SyliusShop/_flashes.html.twig' %}
+    {% include '@SyliusShop/_sprites.html.twig' %}
+    {% include '@SyliusShop/_modals.html.twig' %}
+    {{ sylius_template_event('sylius.shop.layout.after_body') }}
+</body>
+</html>

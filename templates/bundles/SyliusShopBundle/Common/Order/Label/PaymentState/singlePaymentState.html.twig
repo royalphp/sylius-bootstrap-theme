@@ -1,0 +1,14 @@
+{% import '@SyliusShop/Common/Macro/labels.html.twig' as labels %}
+
+{% set value = 'sylius.ui.' ~ state %}
+{% set viewOptions = {
+    authorized: {'icon': 'check-circle', 'color': 'info'},
+    cancelled: {'icon': 'x-circle', 'color': 'warning'},
+    completed: {'icon': 'check-circle', 'color': 'success'},
+    failed: {'icon': 'x-circle', 'color': 'danger'},
+    new: {'icon': 'clock-history', 'color': 'info'},
+    processing: {'icon': 'check-circle', 'color': 'info'},
+    refunded: {'icon': 'reply-all', 'color': 'info'},
+} %}
+
+{{ labels.subtle(viewOptions[state]['color'], value, viewOptions[state]['icon']) }}

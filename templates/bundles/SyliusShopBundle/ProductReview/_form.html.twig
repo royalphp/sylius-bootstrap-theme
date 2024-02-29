@@ -1,0 +1,27 @@
+<div class="col-12">
+    {{ form_row(form.rating, sylius_test_form_attribute('rating')|sylius_merge_recursive({
+        'row_attr': {'class': 'row align-items-center mb-3'},
+        'label_attr': {'class': 'radio-inline col-auto'},
+        'attr': {'class': 'col-auto'},
+    })) }}
+</div>
+<div class="col-12">
+    {{ form_row(form.title, sylius_test_form_attribute('title')|sylius_merge_recursive({
+        'row_attr': {'class': 'form-floating mb-3'},
+        'attr': {'placeholder': 'sylius.ui.title'|trans},
+    })) }}
+</div>
+<div class="col-12">
+    {{ form_row(form.comment, sylius_test_form_attribute('comment')|sylius_merge_recursive({
+        'row_attr': {'class': 'form-floating mb-3'},
+        'attr': {'class': 'hp-100', 'placeholder': 'sylius.ui.write_your_own_review'|trans},
+    })) }}
+</div>
+{% if not is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    <div class="col-12">
+        {{ form_row(form.author.email, sylius_test_form_attribute('author-email')|sylius_merge_recursive({
+            'row_attr': {'class': 'form-floating mb-3'},
+            'attr': {'placeholder': 'sylius.ui.email'|trans},
+        })) }}
+    </div>
+{% endif %}

@@ -1,0 +1,63 @@
+{% macro default(text) %}
+    <span class="badge text-bg-secondary">{{ text|trans }}</span>
+{% endmacro %}
+
+{% macro subtle(type, text, icon, class, attr) %}
+    <span
+        class="badge bg-{{ type }}-subtle text-{{ type }}-emphasis border border-{{ type }}-subtle fw-semibold{% if class is not empty %} {{ class }}{% endif %}"
+        {% if attr is not empty %}{{ attr|raw }}{% endif %}
+    >
+        {% if icon is not empty %}
+            <i class="bi bi-{{ icon }}"></i>
+        {% endif %}
+        {{ text|trans }}
+    </span>
+{% endmacro %}
+
+{% macro status(status) %}
+    {% import _self as labels %}
+
+    {% if status %}
+        {{ labels.enabled() }}
+    {% else %}
+        {{ labels.disabled() }}
+    {% endif %}
+{% endmacro %}
+
+{% macro enabled() %}
+    <span class="badge text-bg-success">
+        <i class="bi bi-check-square"></i>
+        {{ 'sylius.ui.enabled'|trans }}
+    </span>
+{% endmacro %}
+
+{% macro disabled() %}
+    <span class="badge text-bg-warning">
+        <i class="bi bi-dash-square"></i>
+        {{ 'sylius.ui.disabled'|trans }}
+    </span>
+{% endmacro %}
+
+{% macro yesNo(value) %}
+    {% import _self as labels %}
+
+    {% if value %}
+        {{ labels.yes() }}
+    {% else %}
+        {{ labels.no() }}
+    {% endif %}
+{% endmacro %}
+
+{% macro yes() %}
+    <span class="badge text-bg-info">
+        <i class="bi bi-check-lg"></i>
+        {{ 'sylius.ui.yes_label'|trans }}
+    </span>
+{% endmacro %}
+
+{% macro no() %}
+    <span class="badge text-bg-warning">
+        <i class="bi bi-x-lg"></i>
+        {{ 'sylius.ui.no_label'|trans }}
+    </span>
+{% endmacro %}

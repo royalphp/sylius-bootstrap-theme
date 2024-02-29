@@ -1,0 +1,19 @@
+{% import '@SyliusShop/Common/Macro/breadcrumbs.html.twig' as breadcrumbs %}
+
+{% set crumble = {homepage: {label: 'sylius.ui.home'|trans, url: path('sylius_shop_homepage')}} %}
+{% set ancestors = taxon.ancestors|reverse %}
+
+{% for ancestor in ancestors %}
+    {% if not ancestor.enabled %}
+        {% set crumble = crumble|merge({taxon_ancestor: {label: ancestor.name}}) %}
+    {% else %}
+        {% set crumble = crumble|merge({taxon_ancestor: {
+            label: ancestor.name,
+            url: path('sylius_shop_product_index', {'slug': ancestor.slug, '_locale': ancestor.translation.locale}),
+        }}) %}
+    {% endif %}
+{% endfor %}
+
+{% set crumble = crumble|merge({taxon: {label: taxon.name}}) %}
+
+{{ breadcrumbs.default(crumble) }}

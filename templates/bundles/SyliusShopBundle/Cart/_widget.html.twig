@@ -1,0 +1,15 @@
+{% import "@SyliusShop/Common/Macro/money.html.twig" as money %}
+
+<button class="btn btn-outline-sylius" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" id="sylius-cart-button" {{ sylius_test_html_attribute('cart-button') }}>
+    {{ sylius_template_event('sylius.shop.cart.widget.button', {'cart': cart}) }}
+</button>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">{{ sylius_template_event('sylius.shop.cart.widget.button', {'cart': cart}) }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        {{ sylius_template_event('sylius.shop.cart.widget.popup', {'cart': cart}) }}
+    </div>
+</div>

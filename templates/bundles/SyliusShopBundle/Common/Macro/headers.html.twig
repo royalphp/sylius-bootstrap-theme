@@ -1,0 +1,17 @@
+{% macro default(header, icon, subheader) %}
+<h1>
+    {% if icon is not empty %}
+        <i class="bi bi-{{ icon }}"></i>
+    {% endif %}
+    {{ header }}
+    {% if subheader is not empty %}
+        <p class="lead text-body-secondary fs-5 mt-2">{{ subheader }}</p>
+    {% endif %}
+</h1>
+{% endmacro %}
+
+{% macro caption(header, icon) %}
+    <h2>
+        {{ header }} <i class="bi bi-{{ icon}} text-sylius fs-4"></i>
+    </h2>
+{% endmacro %}

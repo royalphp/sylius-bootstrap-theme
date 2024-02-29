@@ -1,0 +1,13 @@
+<span class="text-sylius" id="average-rating" {{ sylius_test_html_attribute('average-rating', product.averageRating|round(2)) }}>
+    {% set rating = product.averageRating|round %}
+    {% set averageRating = product.averageRating|round(2) %}
+    {% for i in 1..5 %}
+        {% if (rating >= i) %}
+            <i class="bi bi-star-fill"></i>
+        {% elseif (rating < i and averageRating > i-1) %}
+            <i class="bi bi-star-half"></i>
+        {% else %}
+            <i class="bi bi-star"></i>
+        {% endif %}
+    {% endfor %}
+</span>

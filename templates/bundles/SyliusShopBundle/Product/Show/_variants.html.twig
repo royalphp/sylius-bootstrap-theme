@@ -1,0 +1,37 @@
+{% import "@SyliusShop/Common/Macro/money.html.twig" as money %}
+
+<table class="table" id="sylius-product-variants" {{ sylius_test_html_attribute('product-variants') }}>
+    <thead class="table-light">
+        <tr>
+            <th>{{ 'sylius.ui.variant'|trans }}</th>
+            <th>{{ 'sylius.ui.price'|trans }}</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for key, variant in product.enabledVariants %}
+        {% set channelPricing = variant.getChannelPricingForChannel(sylius.channel) %}
+        <tr {{ sylius_test_html_attribute('product-variants-row') }}>
+            <td>
+                <div class="row">
+                    <div class="col-auto">{{ variant.name|default(variant.descriptor) }}</div>
+                    {% if product.hasOptions() %}
+                        {% for optionValue in variant.optionValues %}
+                            <div class="col-auto bg-light border">{{ optionValue.value }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </td>
+            {% set appliedPromotions = channelPricing.appliedPromotions|map(promotion => ({'label': promotion.label, 'description': promotion.description})) %}
+            <td class="sylius-product-variant-price"
+                data-applied-promotions="{{ appliedPromotions|json_encode }}"
+                {% if variant|sylius_has_discount({'channel': sylius.channel}) %} data-original-price="{{ money.calculateOriginalPrice(variant) }}" {% endif %}>
+                {{ money.calculatePrice(variant) }}
+            </td>
+            <td class="align-middle text-end">
+                {{ form_widget(form.cartItem.variant[key], {'label': false}) }}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

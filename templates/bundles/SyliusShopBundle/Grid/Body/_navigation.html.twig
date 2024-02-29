@@ -1,0 +1,25 @@
+{% import '@SyliusShop/Common/Macro/pagination.html.twig' as pagination %}
+
+<div class="row justify-content-between mb-3">
+    <div class="col-auto">
+        <div class="row">
+            {% if data|length > 0 and definition.actionGroups.bulk is defined and definition.getEnabledActions('bulk')|length > 0 %}
+                <div class="col">
+                    {% for action in definition.getEnabledActions('bulk') %}
+                        {{ sylius_grid_render_bulk_action(grid, action, null) }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if data.haveToPaginate() %}
+                <div class="col">
+                    {{ pagination.simple(data) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% if definition.limits|length > 1 and data|length > min(definition.limits) %}
+        <div class="col-auto">
+            {{ pagination.perPage(data, definition.limits) }}
+        </div>
+    {% endif %}
+</div>

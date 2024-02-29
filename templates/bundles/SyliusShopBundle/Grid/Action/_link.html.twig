@@ -1,0 +1,6 @@
+{% set path = link.url is defined ? link.url : path(link.route, link.parameters|default([])) %}
+
+<a class="dropdown-item" href="{{ path }}">
+    {% if link.icon is defined %}<i class="bi bi-{{ link.icon }}"></i>{% endif %}
+    {{ link.label|trans }}
+</a>

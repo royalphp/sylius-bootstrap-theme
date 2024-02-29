@@ -1,0 +1,37 @@
+{% import '@SyliusShop/Common/Macro/headers.html.twig' as headers %}
+
+<div class="row">
+    <div class="col-12" id="sylius-billing-address" {{ sylius_test_html_attribute('billing-address') }}>
+        {% include '@SyliusShop/Checkout/Address/_addressBookSelect.html.twig' %}
+        <div class="col-12">
+            <div class="mb-3">
+                {{ headers.default('sylius.ui.billing_address'|trans) }}
+            </div>
+        </div>
+        {% if app.user is null %}
+            {% include '@SyliusShop/Common/Form/_login.html.twig' with {'form': form.customer} %}
+        {% endif %}
+        {% include '@SyliusShop/Common/Form/_address.html.twig' with {'form': form.billingAddress, 'order': order, 'type': 'billing'} %}
+        <div class="col-12">
+            {{ form_row(
+                form.differentShippingAddress,
+                sylius_test_form_attribute('different-shipping-address')|sylius_merge_recursive({
+                    'attr': {'data-toggles': 'sylius-shipping-address'},
+                    'label_attr': {'data-test-different-shipping-address-label': ''}
+                }))
+            }}
+        </div>
+        {{ sylius_template_event('sylius.shop.checkout.address.billing_address_form', {'order': order}) }}
+    </div>
+    <div class="col-12" id="sylius-shipping-address" {{ sylius_test_html_attribute('shipping-address') }}>
+        {% include '@SyliusShop/Checkout/Address/_addressBookSelect.html.twig' %}
+        <div class="col-12">
+            <div class="mb-3">
+                {{ headers.default('sylius.ui.shipping_address'|trans) }}
+            </div>
+        </div>
+        {% include '@SyliusShop/Common/Form/_address.html.twig' with {'form': form.shippingAddress, 'order': order, 'type': 'shipping'} %}
+
+        {{ sylius_template_event('sylius.shop.checkout.address.shipping_address_form', {'order': order}) }}
+    </div>
+</div>

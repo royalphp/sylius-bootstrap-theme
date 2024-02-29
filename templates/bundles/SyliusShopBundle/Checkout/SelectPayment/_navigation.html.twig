@@ -1,0 +1,20 @@
+{% set enabled = order.payments|length %}
+
+<div class="row justify-content-between my-3">
+    <div class="col-auto">
+        {% if sylius_is_shipping_required(order) %}
+            <a href="{{ path('sylius_shop_checkout_select_shipping') }}" class="btn btn-outline-sylius btn-lg">
+                <i class="bi bi-arrow-left"></i> {{ 'sylius.ui.change_shipping_method'|trans }}
+            </a>
+        {% else %}
+            <a href="{{ path('sylius_shop_checkout_address') }}" class="btn btn-outline-sylius btn-lg">
+                <i class="bi bi-arrow-left"></i> {{ 'sylius.ui.change_address'|trans }}
+            </a>
+        {% endif %}
+    </div>
+    <div class="col-auto">
+        <button type="submit" id="next-step" class="btn btn-sylius btn-lg" {{ not enabled ? 'disabled'}} {{ sylius_test_html_attribute('next-step') }}>
+            {{ 'sylius.ui.next'|trans }} <i class="bi bi-arrow-right"></i>
+        </button>
+    </div>
+</div>
