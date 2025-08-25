@@ -49,15 +49,13 @@
 {% endmacro %}
 
 {% macro yes() %}
-    <span class="badge text-bg-info">
-        <i class="bi bi-check-lg"></i>
-        {{ 'sylius.ui.yes_label'|trans }}
-    </span>
+    {% import _self as labels %}
+
+    {{ labels.subtle('success', 'sylius.ui.yes_label', 'check-lg') }}
 {% endmacro %}
 
 {% macro no() %}
-    <span class="badge text-bg-warning">
-        <i class="bi bi-x-lg"></i>
-        {{ 'sylius.ui.no_label'|trans }}
-    </span>
+    {% import _self as labels %}
+
+    {{ labels.subtle('danger', 'sylius.ui.no_label', 'x-lg') }}
 {% endmacro %}
