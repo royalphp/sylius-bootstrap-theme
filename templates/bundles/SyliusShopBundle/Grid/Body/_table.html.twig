@@ -7,7 +7,7 @@
             <div class="table-responsive">
                 <table class="table table-bordered align-middle mb-0" {{ sylius_test_html_attribute('grid-table') }}>
                     <thead>
-                        <tr>{{ table.headers(grid, definition, app.request.attributes) }}</tr>
+                        <tr class="align-middle">{{ table.headers(grid, definition, app.request.attributes) }}</tr>
                     </thead>
                     <tbody {{ sylius_test_html_attribute('grid-table-body') }}>
                         {% for row in data %}

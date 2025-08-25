@@ -12,12 +12,12 @@
             {% if field.isSortable %}
                 {{ sorting.tableHeader(grid, field, requestAttributes) }}
             {% else %}
-                <th class="sylius-table-column-{{ field.name }}">{{ field.label|trans }}</th>
+                <th class="sylius-table-column-{{ field.name }} text-nowrap">{{ field.label|trans }}</th>
             {% endif %}
         {% endif %}
     {% endfor %}
     {% if definition.actionGroups.item is defined and definition.getEnabledActions('item')|length > 0 %}
-        <th class="sylius-table-column-actions">{{ 'sylius.ui.actions'|trans }}</th>
+        <th class="sylius-table-column-actions text-nowrap">{{ 'sylius.ui.actions'|trans }}</th>
     {% endif %}
 {% endmacro %}
 
@@ -35,7 +35,7 @@
             <td {{ sylius_test_html_attribute('actions') }}>
                 <div class="row justify-content-start mx-0 g-2">
                     {% for action in definition.getEnabledActions('item')|sort_by('position') %}
-                        <div class="col-auto px-1">
+                        <div class="col-auto text-nowrap px-1">
                             {{ sylius_grid_render_action(grid, action, row) }}
                         </div>
                     {% endfor %}
@@ -44,7 +44,7 @@
                     <hr class="my-2">
                     <div class="row justify-content-start mx-0 g-2">
                         {% for action in definition.getEnabledActions('subitem')|sort_by('position') %}
-                            <div class="col-auto px-1">
+                            <div class="col-auto text-nowrap px-1">
                                 {{ sylius_grid_render_action(grid, action, row) }}
                             </div>
                         {% endfor %}

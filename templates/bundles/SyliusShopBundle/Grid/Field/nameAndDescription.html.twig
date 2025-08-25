@@ -1,1 +1,4 @@
-{% extends '@SyliusUi/Grid/Field/nameAndDescription.html.twig' %}
+<strong>{{ data.name }}</strong>
+{% if data.description is not empty %}
+    <p class="mb-0">{{ data.description }}</p>
+{% endif %}
