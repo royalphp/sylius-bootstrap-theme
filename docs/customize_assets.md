@@ -79,7 +79,7 @@ Encore
 #### 10. The only thing left is to compile your assets:
 
 ```shell
-yarn encore dev --progress
+npx encore dev
 ```
 
 Here you're adding your additional entry files to those that the base theme uses.

@@ -10,7 +10,7 @@ in your case it's `Semantic UI` theme (by default for the admin panel, and for t
 
 Let's create a `Detail` action, and an appropriate template for it, for this we first need to define this in the settings.
 
-In `config/packages/_sylius.yaml` add the following paths:
+In `config/packages/sylius_grid.yaml` add the following paths:
 
 ```yaml
 sylius_grid:
@@ -64,119 +64,32 @@ Now you're ready to use it in your grid, let's add this to your previous example
 
 namespace App\Grid;
 
+use App\Entity\Product\Product;
 use App\Entity\Product\ProductDemonstration;
 use App\Utils\GridHelperInterface;
-use App\Utils\GridHelperTrait;
 use Sylius\Bundle\GridBundle\Builder\Action\Action;
-use Sylius\Bundle\GridBundle\Builder\Action\CreateAction;
-use Sylius\Bundle\GridBundle\Builder\Action\DeleteAction;
-use Sylius\Bundle\GridBundle\Builder\Action\ShowAction;
-use Sylius\Bundle\GridBundle\Builder\Action\UpdateAction;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\BulkActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\ItemActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
 use Sylius\Bundle\GridBundle\Builder\Field\DateTimeField;
+use Sylius\Bundle\GridBundle\Builder\Field\Field;
 use Sylius\Bundle\GridBundle\Builder\Field\StringField;
 use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
 use Sylius\Bundle\GridBundle\Builder\Filter\Filter;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
 use Sylius\Bundle\GridBundle\Grid\AbstractGrid;
 use Sylius\Bundle\GridBundle\Grid\ResourceAwareGridInterface;
-use Sylius\Bundle\ThemeBundle\Context\ThemeContextInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-final class ProductDemonstrationGrid extends AbstractGrid implements ResourceAwareGridInterface, GridHelperInterface
+final class ProductDemonstrationGrid extends AbstractGrid implements ResourceAwareGridInterface
 {
-    use GridHelperTrait;
-
     public function __construct(
-        private readonly ?TokenStorageInterface $tokenStorage,
-        private readonly ?ThemeContextInterface $themeContext,
+        private readonly GridHelperInterface $gridHelper,
     ) {
-    }
-
-    public function buildGrid(GridBuilderInterface $gridBuilder): void
-    {
-        $gridBuilder
-            ->addFilter(
-                Filter::create('title', 'string')
-                    ->setTemplate($this->getTemplateByTheme(self::GRID_FILTER, 'string'))
-            )
-            ->addField(
-                StringField::create('title')
-                    ->setLabel('Title')
-                    ->setSortable(true)
-            )
-            ->addField(
-                StringField::create('description')
-                    ->setLabel('Description')
-                    ->setSortable(true)
-            )
-            ->addField(
-                TwigField::create('counted', $this->getTemplateByTheme(self::GRID_FIELD, 'rawLabel'))
-            )
-            ->addField(
-                TwigField::create('enabled', $this->getTemplateByTheme(self::GRID_FIELD, 'enabled'))
-            )
-            ->addField(
-                DateTimeField::create('createdAt')
-            )
-            ->addActionGroup(
-                MainActionGroup::create(
-                    CreateAction::create(),
-                )
-            )
-            ->addActionGroup(
-                ItemActionGroup::create(
-                    Action::create('detail', $this->getTemplateByTheme(self::GRID_ACTION, 'detail'))
-                        ->setLabel('Detail')
-                        ->setOptions([
-                            'link' => [
-                                'route' => 'sylius_shop_product_show',
-                                'parameters' => ['slug' => 'resource.product.slug'],
-                            ],
-                        ]),
-                ),
-            );
-
-        if ($this->isAdminUser()) {
-            $gridBuilder
-                ->addField(
-                    StringField::create('product')
-                        ->setLabel('Product')
-                        ->setSortable(true)
-                )
-                ->addField(
-                    DateTimeField::create('updatedAt')
-                )
-                ->addActionGroup(
-                    ItemActionGroup::create(
-                        ShowAction::create(),
-                        UpdateAction::create(),
-                        DeleteAction::create(),
-                    )
-                )
-                ->addActionGroup(
-                    BulkActionGroup::create(
-                        DeleteAction::create()
-                    )
-                );
-        }
-
-        if ($this->isShopUser()) {
-            $gridBuilder
-                ->addActionGroup(
-                    ItemActionGroup::create(
-                        ShowAction::create(),
-                        UpdateAction::create(),
-                    )
-                );
-        }
     }
 
     public static function getName(): string
     {
-        return 'app_product_information';
+        return 'app_product_demonstration';
     }
 
     public function getResourceClass(): string
@@ -184,14 +97,80 @@ final class ProductDemonstrationGrid extends AbstractGrid implements ResourceAwa
         return ProductDemonstration::class;
     }
 
-    private function getTokenStorage(): ?TokenStorageInterface
+    public function buildGrid(GridBuilderInterface $gridBuilder): void
     {
-        return $this->tokenStorage;
-    }
+        $gridBuilder
+            ->addFilter(Filter::create('product', 'entity')
+                ->setFormOptions(['class' => Product::class])
+                ->setLabel('sylius.ui.product')
+                ->setTemplate($this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_FILTER, 'entity'))
+                ->setEnabled($this->gridHelper->getUserAccessHelper()->isAdminUser())
+            )
+            ->addFilter(Filter::create('title', 'string')
+                ->setLabel('sylius.ui.title')
+                ->setTemplate($this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_FILTER, 'string'))
+            )
+            ->addFilter(Filter::create('createdAt', 'date')
+                ->setLabel('sylius.ui.created_at')
+                ->setTemplate($this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_FILTER, 'date'))
+            )
+            ->addFilter(Filter::create('featured', 'boolean')
+                ->setLabel('app.ui.featured')
+                ->setTemplate($this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_FILTER, 'boolean'))
+            )
 
-    private function getThemeContext(): ?ThemeContextInterface
-    {
-        return $this->themeContext;
+            ->addField(StringField::create('product')
+                ->setLabel('sylius.ui.product')
+                ->setSortable(true)
+                ->setEnabled($this->gridHelper->getUserAccessHelper()->isAdminUser())
+            )
+            ->addField(Field::create('title', 'string')
+                ->setLabel('sylius.ui.title')
+                ->setSortable(true)
+            )
+            ->addField(StringField::create('description')
+                ->setLabel('sylius.ui.description')
+                ->setEnabled($this->gridHelper->getUserAccessHelper()->isAdminPage())
+            )
+            ->addField(TwigField::create('featured', $this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_FIELD, 'yesNo'))
+                ->setLabel('app.ui.featured')
+                ->setSortable(true)
+            )
+            ->addField(DateTimeField::create('createdAt')
+                ->setLabel('sylius.ui.created_at')
+                ->setSortable(true)
+            )
+            ->addField(DateTimeField::create('completedAt')
+                ->setLabel('app.ui.completed_at')
+                ->setSortable(true)
+                ->setEnabled($this->gridHelper->getUserAccessHelper()->isAdminUser())
+            )
+
+            ->addActionGroup(MainActionGroup::create(
+                Action::create('create', $this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_ACTION, 'create'))
+                    ->setEnabled($this->gridHelper->getUserAccessHelper()->isAdminUser()),
+            ))
+            ->addActionGroup(ItemActionGroup::create(
+                Action::create('detail', $this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_ACTION, 'detail'))
+                    ->setLabel('app.ui.detail')
+                    ->setOptions(['link' => [
+                        'route' => 'sylius_shop_product_show',
+                        'parameters' => ['slug' => 'resource.product.slug'],
+                    ]]),
+                Action::create('show', $this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_ACTION, 'show'))
+                    ->setEnabled($this->gridHelper->getUserAccessHelper()->isShopUser()),
+                Action::create('update', $this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_ACTION, 'update')),
+                Action::create('delete', $this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_ACTION, 'delete'))
+                    ->setEnabled($this->gridHelper->getUserAccessHelper()->isAdminUser()),
+            ))
+            ->addActionGroup(BulkActionGroup::create(
+                Action::create('delete', $this->gridHelper->getTemplateByTheme(GridHelperInterface::GRID_ACTION, 'delete'))
+                    ->setEnabled($this->gridHelper->getUserAccessHelper()->isAdminUser()),
+            ))
+
+            ->addOrderBy('createdAt')
+            ->setLimits([8, 16, 32, 64])
+        ;
     }
 }
 ```

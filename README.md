@@ -17,6 +17,10 @@
 Modern approach to building frontend for Sylius projects, using the Bootstrap framework, and tools like Sass and Typescript.
 The main goal of this theme was to create a powerful, extensible and feature-packed frontend toolkit.
 
+## Demonstration
+
+[Demo is available here.](https://github.com/royalphp/sylius-demo)
+
 ## Documentation
 
 [Documentation is available in the *docs* folder.](docs/index.md)
