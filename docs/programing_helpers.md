@@ -10,20 +10,20 @@ Let's create a helper that will use the theme context,
 > [!NOTE]  
 > We are using the `App\Utils` namespace for universality, but feel free to use any other you like.
 
-For example, firstly let's create an interface:
+For example, first let's create an interface:
 
 ```php
 <?php
 
 namespace App\Utils;
 
-interface UserThemeInterface
+interface UserThemeHelperInterface
 {
     public function isBootstrapTheme(): bool;
 }
 ```
 
-and then flesh out this interface:
+and then we implement this interface:
 
 ```php
 <?php
@@ -32,13 +32,16 @@ namespace App\Utils;
 
 use Sylius\Bundle\ThemeBundle\Context\ThemeContextInterface;
 
-trait UserThemeTrait
+final readonly class UserThemeHelper implements UserThemeHelperInterface
 {
-    abstract protected function getThemeContext(): ?ThemeContextInterface;
+    public function __construct(
+        private ThemeContextInterface $themeContext,
+    ) {
+    }
 
     public function isBootstrapTheme(string $keyword = 'bootstrap'): bool
     {
-        return str_contains($this->getThemeContext()?->getTheme()?->getName() ?? '', $keyword);
+        return str_contains($this->themeContext->getTheme()?->getName() ?? '', $keyword);
     }
 }
 ```
@@ -47,8 +50,7 @@ trait UserThemeTrait
 > We use the common keyword `bootstrap` because this theme is called `royalphp/sylius-bootstrap-theme` according to the `composer.json`.
 > This means that if your theme carries a different common name, you should specify it to correctly identify it.
 
-Here we want to make sure your class will contain the theme context method `getThemeContext`
-and by implementing `isBootstrapTheme` method we can determine the theme in use by keyword.
+By implementing the `isBootstrapTheme` method, we can determine the theme in use by keyword.
 
 Now, let's create functionality using which you could determine which part of the site you are in.
 
@@ -59,15 +61,10 @@ For example, first, let's create an interface:
 
 namespace App\Utils;
 
-use Sylius\Component\User\Model\UserInterface;
-
-interface UserAccessInterface
+interface UserAccessHelperInterface
 {
-    final public const SIDE_BACK = 'admin';
-
-    final public const SIDE_FRONT = 'shop';
-
-    public function getCurrentUser(): UserInterface;
+    final public const string SIDE_BACK = 'admin';
+    final public const string SIDE_FRONT = 'shop';
 
     public function isAdminUser(): bool;
 
@@ -79,7 +76,7 @@ interface UserAccessInterface
 }
 ```
 
-and then flesh out this interface:
+and then we implement this interface:
 
 ```php
 <?php
@@ -93,19 +90,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-trait UserAccessTrait
+final readonly class UserAccessHelper implements UserAccessHelperInterface
 {
-    abstract protected function getTokenStorage(): ?TokenStorageInterface;
-
-    public function getCurrentUser(): UserInterface
-    {
-        $user = $this->getTokenStorage()?->getToken()?->getUser();
-
-        if (!($user instanceof UserInterface)) {
-            throw new AccessDeniedException();
-        }
-
-        return $user;
+    public function __construct(
+        private TokenStorageInterface $tokenStorage,
+    ) {
     }
 
     public function isAdminUser(): bool
@@ -120,17 +109,28 @@ trait UserAccessTrait
 
     public function isAdminPage(): bool
     {
-        return $this->isSidePage(UserAccessInterface::SIDE_BACK);
+        return $this->isSidePage(self::SIDE_BACK);
     }
 
     public function isShopPage(): bool
     {
-        return $this->isSidePage(UserAccessInterface::SIDE_FRONT);
+        return $this->isSidePage(self::SIDE_FRONT);
+    }
+
+    private function getCurrentUser(): UserInterface
+    {
+        $user = $this->tokenStorage->getToken()?->getUser();
+
+        if (!($user instanceof UserInterface)) {
+            throw new AccessDeniedException();
+        }
+
+        return $user;
     }
 
     private function isSidePage(string $side): bool
     {
-        $token = $this->getTokenStorage()?->getToken();
+        $token = $this->tokenStorage->getToken();
 
         if (!($token instanceof UsernamePasswordToken)) {
             throw new AccessDeniedException();
@@ -141,17 +141,17 @@ trait UserAccessTrait
 }
 ```
 
-Here we're determining the current page based on the user, meaning that we use the built-in security bundle's firewall to make sure your class has access to said service with the `getTokenStorage` method.
+Here we're determining the current page based on the user, meaning that we use the built-in security bundle's firewall to ensure that your class has access to the specified service.
 
 Now it is a good time to put your helpers to good use, and let's propose such an example.
 At present, if you turn on the `SyliusBootstrapTheme` and go to the customer account page of the shop, and look at the sidebar of his additional details,
 you may note that not all the menu items have icons displayed, specifically for `Dashboard`, and `Personal information` items. Let's fix that.
 
 > [!NOTE]  
-> Actually we didn't forget to put icons, it was left unchanged on purpose for this example's sake.
+> Actually, we didn't forget to put icons. It was left unchanged on purpose for this example's sake.
 > The fact is, that this menu gets built by events and there's no way in the templates to change these specific menu items,
 > because they get generated by internal components, however, if you don't wish to use this approach,
-> you can hardcode these menu items in the needed template, and this would override the default output of these items.
+> you can hardcode these menu items in the necessary template, and this would override the default output of these items.
 
 In Sylius project, menus are built using `KnpMenuBundle`, therefore, if you wish to delve deeper into this issue,
 you can read [this guide](https://symfony.com/bundles/KnpMenuBundle/current/index.html),
@@ -166,98 +166,49 @@ Firstly, let's create a listener for a customer's shop account menu, for this cr
 namespace App\Menu;
 
 use Sylius\Bundle\UiBundle\Menu\Event\MenuBuilderEvent;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-final class ShopAccountMenuListener
+#[AsEventListener(event: 'sylius.menu.shop.account', method: 'onSyliusMenuShopAccount')]
+final readonly class ShopAccountMenuListener
 {
-    public function addAccountMenuItems(MenuBuilderEvent $event): void
+    public function onSyliusMenuShopAccount(MenuBuilderEvent $event): void
     {
         // ...
     }
 }
 ```
 
-and configure it in `config/services.yaml` file
-
-```yaml
-services:
-    app.listener.shop.menu_builder:
-        class: App\Menu\ShopAccountMenuListener
-        tags:
-            - { name: kernel.event_listener, event: sylius.menu.shop.account, method: addAccountMenuItems }
-```
+> [!NOTE]  
+> We configure the service through attributes, but this can still be configured through the `config/services.yaml` file.
 
 Now you have a listener class using which you can change a customer's shop account menu,
-let's do it right now by implementing the `UserThemeInterface`, and connecting the `App\Utils\UserThemeTrait`:
+let's do it right now using our helpers by writing a condition under which we will display the icons:
 
 ```php
 <?php
 
 namespace App\Menu;
 
-use App\Utils\UserThemeInterface;
-use App\Utils\UserThemeTrait;
-use Sylius\Bundle\ThemeBundle\Context\ThemeContextInterface;
+use App\Utils\UserThemeHelperInterface;
 use Sylius\Bundle\UiBundle\Menu\Event\MenuBuilderEvent;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-final class ShopAccountMenuListener implements UserThemeInterface
+#[AsEventListener(event: 'sylius.menu.shop.account', method: 'onSyliusMenuShopAccount')]
+final readonly class ShopAccountMenuListener
 {
-    use UserThemeTrait;
-
     public function __construct(
-        private readonly ?ThemeContextInterface $themeContext,
+        private UserThemeHelperInterface $userThemeHelper,
     ) {
     }
 
-    public function addAccountMenuItems(MenuBuilderEvent $event): void
-    {
-        // ...
-    }
-
-    private function getThemeContext(): ?ThemeContextInterface
-    {
-        return $this->themeContext;
-    }
-}
-```
-
-At this stage, we prepared methods necessary for determining the theme and now we can write a condition, under which we'll display icons, let's finish this:
-
-```php
-<?php
-
-namespace App\Menu;
-
-use App\Utils\UserThemeInterface;
-use App\Utils\UserThemeTrait;
-use Sylius\Bundle\ThemeBundle\Context\ThemeContextInterface;
-use Sylius\Bundle\UiBundle\Menu\Event\MenuBuilderEvent;
-
-final class ShopAccountMenuListener implements UserThemeInterface
-{
-    use UserThemeTrait;
-
-    public function __construct(
-        private readonly ?ThemeContextInterface $themeContext,
-    ) {
-    }
-
-    public function addAccountMenuItems(MenuBuilderEvent $event): void
+    public function onSyliusMenuShopAccount(MenuBuilderEvent $event): void
     {
         $menu = $event->getMenu();
 
-        if ($this->isBootstrapTheme()) {
-            if ($menu->getChild('dashboard')) {
-                $menu->getChild('dashboard')->setLabelAttribute('icon', 'house');
-            }
-            if ($menu->getChild('personal_information')) {
-                $menu->getChild('personal_information')->setLabelAttribute('icon', 'person');
-            }
+        if ($this->userThemeHelper->isBootstrapTheme()) {
+            $menu->getChild('dashboard')?->setLabelAttribute('icon', 'house');
+            $menu->getChild('personal_information')?->setLabelAttribute('icon', 'person');
         }
-    }
-
-    private function getThemeContext(): ?ThemeContextInterface
-    {
-        return $this->themeContext;
     }
 }
 ```

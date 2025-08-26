@@ -18,20 +18,42 @@ that both sides use the same component, so we have to trick it this way.
 
 First, you need to create an entity, for example, call it `App\Entity\Product\ProductDemonstration`, and add the following fields:
 
-| Property name | Field type         | Notes                      |
-|---------------|--------------------|----------------------------|
-| product       | OneToOne           | App\Entity\Product\Product |
-| title         | string             | all by default             |
-| description   | text               | all by default             |
-| counted       | integer            | all by default             |
-| enabled       | boolean            | all by default             |
-| createdAt     | datetime_immutable | all by default             |
-| updatedAt     | datetime_immutable | all by default             |
-
 > [!TIP]
-> For `createdAt`, `updatedAt`, and `enabled` properties, you can use
-> `Sylius\Component\Resource\Model\TimestampableTrait` and `Sylius\Component\Resource\Model\ToggleableTrait` traits, respectively.
-> Also, using `StofDoctrineExtensionsBundle` bundle is a good idea.
+> Create this enum first so that it can be used later when creating the entity.
+
+```php
+<?php
+
+namespace App\Entity\Product;
+
+enum ProductDemonstrationStatus: string
+{
+    case Requested = 'requested';
+    case Handling = 'handling';
+    case Pending = 'pending';
+    case Completed = 'completed';
+    case Cancelled = 'cancelled';
+
+    /**
+     * @return string[]
+     */
+    public static function toArray(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
+}
+```
+
+| Property name | Field type         | Notes                                                                            |
+|---------------|--------------------|----------------------------------------------------------------------------------|
+| product       | ManyToOne          | related to: App\Entity\Product\Product <br/> nullable: no <br/> add property: no |
+| title         | string             | all by default                                                                   |
+| description   | text               | nullable: yes                                                                    |
+| capacity      | integer            | all by default                                                                   |
+| featured      | boolean            | all by default                                                                   |
+| status        | enum               | enum class: App\Entity\Product\ProductDemonstrationStatus                        |
+| createdAt     | datetime_immutable | all by default                                                                   |
+| updatedAt     | datetime_immutable | nullable: yes                                                                    |
 
 After the creation of your demo entity, you will also need to create a migration, execute it,
 and finally, generate a grid. As a result, `App\Grid\ProductDemonstrationGrid` grid,
@@ -47,10 +69,10 @@ namespace App\Entity\Product;
 use App\Repository\Product\ProductDemonstrationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Sylius\Component\Resource\Model\ResourceInterface;
+use Sylius\Resource\Model\ResourceInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\HasLifecycleCallbacks]
-#[ORM\Table(name: 'sylius_product_information')]
+#[ORM\Table(name: 'app_product_demonstration')]
 #[ORM\Entity(repositoryClass: ProductDemonstrationRepository::class)]
 class ProductDemonstration implements ResourceInterface
 {
@@ -59,37 +81,36 @@ class ProductDemonstration implements ResourceInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist'])]
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Product $product = null;
 
+    #[Assert\NotBlank(groups: ['sylius']), Assert\Length(max: 255, groups: ['sylius'])]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[Assert\Positive(groups: ['sylius'])]
     #[ORM\Column]
-    private int $counted = 0;
+    private int $capacity = 0;
 
     #[ORM\Column]
-    private bool $enabled = true;
+    private bool $featured = false;
 
-    #[ORM\Column(name: 'created_at')]
+    #[ORM\Column(enumType: ProductDemonstrationStatus::class)]
+    private ProductDemonstrationStatus $status = ProductDemonstrationStatus::Requested;
+
+    #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(name: 'updated_at', nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $completedAt = null;
 
-    #[ORM\PrePersist]
-    public function prePersistEntity(): void
+    public function __construct()
     {
         $this->setCreatedAt(new \DateTimeImmutable());
-    }
-
-    #[ORM\PreUpdate]
-    public function preUpdateEntity(): void
-    {
-        $this->setUpdatedAt(new \DateTimeImmutable());
     }
 
     public function getId(): ?int
@@ -114,7 +135,7 @@ class ProductDemonstration implements ResourceInterface
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
@@ -126,33 +147,45 @@ class ProductDemonstration implements ResourceInterface
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function getCounted(): int
+    public function getCapacity(): int
     {
-        return $this->counted;
+        return $this->capacity;
     }
 
-    public function setCounted(int $counted): static
+    public function setCapacity(int $capacity): static
     {
-        $this->counted = $counted;
+        $this->capacity = $capacity;
 
         return $this;
     }
 
-    public function isEnabled(): bool
+    public function isFeatured(): bool
     {
-        return $this->enabled;
+        return $this->featured;
     }
 
-    public function setEnabled(bool $enabled): static
+    public function setFeatured(bool $featured): static
     {
-        $this->enabled = $enabled;
+        $this->featured = $featured;
+
+        return $this;
+    }
+
+    public function getStatus(): ProductDemonstrationStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(ProductDemonstrationStatus $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }
@@ -169,14 +202,14 @@ class ProductDemonstration implements ResourceInterface
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getCompletedAt(): ?\DateTimeImmutable
     {
-        return $this->updatedAt;
+        return $this->completedAt;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    public function setCompletedAt(?\DateTimeImmutable $completedAt): static
     {
-        $this->updatedAt = $updatedAt;
+        $this->completedAt = $completedAt;
 
         return $this;
     }
@@ -197,102 +230,33 @@ make some fields available only for admin, and the rest will be available to the
 
 namespace App\Grid;
 
+use App\Entity\Product\Product;
 use App\Entity\Product\ProductDemonstration;
-use App\Utils\UserAccessInterface;
-use App\Utils\UserAccessTrait;
-use Sylius\Bundle\GridBundle\Builder\Action\CreateAction;
-use Sylius\Bundle\GridBundle\Builder\Action\DeleteAction;
-use Sylius\Bundle\GridBundle\Builder\Action\ShowAction;
-use Sylius\Bundle\GridBundle\Builder\Action\UpdateAction;
+use App\Entity\Product\ProductDemonstrationStatus;
+use App\Utils\UserAccessHelperInterface;
+use Sylius\Bundle\GridBundle\Builder\Action\Action;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\BulkActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\ItemActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
 use Sylius\Bundle\GridBundle\Builder\Field\DateTimeField;
+use Sylius\Bundle\GridBundle\Builder\Field\Field;
 use Sylius\Bundle\GridBundle\Builder\Field\StringField;
 use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
 use Sylius\Bundle\GridBundle\Builder\Filter\Filter;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
 use Sylius\Bundle\GridBundle\Grid\AbstractGrid;
 use Sylius\Bundle\GridBundle\Grid\ResourceAwareGridInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-final class ProductDemonstrationGrid extends AbstractGrid implements ResourceAwareGridInterface, UserAccessInterface
+final class ProductDemonstrationGrid extends AbstractGrid implements ResourceAwareGridInterface
 {
-    use UserAccessTrait;
-
     public function __construct(
-        private readonly ?TokenStorageInterface $tokenStorage,
+        private readonly UserAccessHelperInterface $userAccessHelper,
     ) {
-    }
-
-    public function buildGrid(GridBuilderInterface $gridBuilder): void
-    {
-        $gridBuilder
-            ->addFilter(Filter::create('title', 'string'))
-            ->addField(
-                StringField::create('product')
-                    ->setLabel('Product')
-                    ->setSortable(true)
-                    ->setEnabled($this->isAdminUser())
-            )
-            ->addField(
-                StringField::create('title')
-                    ->setLabel('Title')
-                    ->setSortable(true)
-            )
-            ->addField(
-                StringField::create('description')
-                    ->setLabel('Description')
-                    ->setSortable(true)
-            )
-            ->addField(
-                TwigField::create('counted', '@SyliusUi/Grid/Field/rawLabel.html.twig')
-            )
-            ->addField(
-                TwigField::create('enabled', '@SyliusUi/Grid/Field/enabled.html.twig')
-            )
-            ->addField(
-                DateTimeField::create('createdAt')
-            )
-            ->addActionGroup(
-                MainActionGroup::create(
-                    CreateAction::create(),
-                )
-            );
-
-        if ($this->isAdminUser()) {
-            $gridBuilder
-                ->addField(
-                    DateTimeField::create('updatedAt')
-                )
-                ->addActionGroup(
-                    ItemActionGroup::create(
-                        ShowAction::create(),
-                        UpdateAction::create(),
-                        DeleteAction::create(),
-                    )
-                )
-                ->addActionGroup(
-                    BulkActionGroup::create(
-                        DeleteAction::create()
-                    )
-                );
-        }
-
-        if ($this->isShopUser()) {
-            $gridBuilder
-                ->addActionGroup(
-                    ItemActionGroup::create(
-                        ShowAction::create(),
-                        UpdateAction::create(),
-                    )
-                );
-        }
     }
 
     public static function getName(): string
     {
-        return 'app_product_information';
+        return 'app_product_demonstration';
     }
 
     public function getResourceClass(): string
@@ -300,15 +264,76 @@ final class ProductDemonstrationGrid extends AbstractGrid implements ResourceAwa
         return ProductDemonstration::class;
     }
 
-    private function getTokenStorage(): ?TokenStorageInterface
+    public function buildGrid(GridBuilderInterface $gridBuilder): void
     {
-        return $this->tokenStorage;
+        $gridBuilder
+            ->addFilter(Filter::create('product', 'entity')
+                ->setFormOptions(['class' => Product::class])
+                ->setLabel('sylius.ui.product')
+                ->setEnabled($this->userAccessHelper->isAdminUser())
+            )
+            ->addFilter(Filter::create('title', 'string')
+                ->setLabel('sylius.ui.title')
+            )
+            ->addFilter(Filter::create('createdAt', 'date')
+                ->setLabel('sylius.ui.created_at')
+            )
+            ->addFilter(Filter::create('featured', 'boolean')
+                ->setLabel('app.ui.featured')
+            )
+
+            ->addField(StringField::create('product')
+                ->setLabel('sylius.ui.product')
+                ->setSortable(true)
+                ->setEnabled($this->userAccessHelper->isAdminUser())
+            )
+            ->addField(Field::create('title', 'string')
+                ->setLabel('sylius.ui.title')
+                ->setSortable(true)
+            )
+            ->addField(StringField::create('description')
+                ->setLabel('sylius.ui.description')
+                ->setEnabled($this->userAccessHelper->isAdminPage())
+            )
+            ->addField(TwigField::create('featured', '@SyliusUi/Grid/Field/enabled.html.twig')
+                ->setLabel('app.ui.featured')
+                ->setSortable(true)
+            )
+            ->addField(DateTimeField::create('createdAt')
+                ->setLabel('sylius.ui.created_at')
+                ->setSortable(true)
+            )
+            ->addField(DateTimeField::create('completedAt')
+                ->setLabel('app.ui.completed_at')
+                ->setSortable(true)
+                ->setEnabled($this->userAccessHelper->isAdminUser())
+            )
+
+            ->addActionGroup(MainActionGroup::create(
+                Action::create('create', 'create')
+                    ->setEnabled($this->userAccessHelper->isAdminUser()),
+            ))
+            ->addActionGroup(ItemActionGroup::create(
+                Action::create('show', 'show')
+                    ->setEnabled($this->userAccessHelper->isShopUser()),
+                Action::create('update', 'update'),
+                Action::create('delete', 'delete')
+                    ->setEnabled($this->userAccessHelper->isAdminUser()),
+            ))
+            ->addActionGroup(BulkActionGroup::create(
+                Action::create('delete', 'delete')
+                    ->setEnabled($this->userAccessHelper->isAdminUser()),
+            ))
+
+            ->addOrderBy('createdAt')
+            ->setLimits([8, 16, 32, 64])
+        ;
     }
 }
 ```
 
 Now, if you look at this grid in the admin panel, everything is perfectly displayed, but if you switch to the customer's shop,
-you can see that `title` filter field, and `counted`, `enabled` fields are not styled.
+you can see that `title` filter and `featured` field are not styled as well as others.
 That's it! This is the problem this whole party is about. If you try to override the templates for `SyliusUiBundle`,
 you will face the situation that these changes will be applied to both sides. Fortunately, now we can fix it this way:
 
@@ -317,109 +342,34 @@ you will face the situation that these changes will be applied to both sides. Fo
 
 namespace App\Grid;
 
+use App\Entity\Product\Product;
 use App\Entity\Product\ProductDemonstration;
-use App\Utils\UserAccessInterface;
-use App\Utils\UserAccessTrait;
-use App\Utils\UserThemeInterface;
-use App\Utils\UserThemeTrait;
-use Sylius\Bundle\GridBundle\Builder\Action\CreateAction;
-use Sylius\Bundle\GridBundle\Builder\Action\DeleteAction;
-use Sylius\Bundle\GridBundle\Builder\Action\ShowAction;
-use Sylius\Bundle\GridBundle\Builder\Action\UpdateAction;
+use App\Utils\UserAccessHelperInterface;
+use App\Utils\UserThemeHelperInterface;
+use Sylius\Bundle\GridBundle\Builder\Action\Action;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\BulkActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\ItemActionGroup;
 use Sylius\Bundle\GridBundle\Builder\ActionGroup\MainActionGroup;
 use Sylius\Bundle\GridBundle\Builder\Field\DateTimeField;
+use Sylius\Bundle\GridBundle\Builder\Field\Field;
 use Sylius\Bundle\GridBundle\Builder\Field\StringField;
 use Sylius\Bundle\GridBundle\Builder\Field\TwigField;
 use Sylius\Bundle\GridBundle\Builder\Filter\Filter;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
 use Sylius\Bundle\GridBundle\Grid\AbstractGrid;
 use Sylius\Bundle\GridBundle\Grid\ResourceAwareGridInterface;
-use Sylius\Bundle\ThemeBundle\Context\ThemeContextInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-final class ProductDemonstrationGrid extends AbstractGrid implements ResourceAwareGridInterface, UserAccessInterface, UserThemeInterface
+final class ProductDemonstrationGrid extends AbstractGrid implements ResourceAwareGridInterface
 {
-    use UserAccessTrait;
-    use UserThemeTrait;
-
     public function __construct(
-        private readonly ?TokenStorageInterface $tokenStorage,
-        private readonly ?ThemeContextInterface $themeContext,
+        private readonly UserAccessHelperInterface $userAccessHelper,
+        private readonly UserThemeHelperInterface $userThemeHelper,
     ) {
-    }
-
-    public function buildGrid(GridBuilderInterface $gridBuilder): void
-    {
-        $gridBuilder
-            ->addFilter(
-                Filter::create('title', 'string')
-                    ->setTemplate($this->getTemplateByTheme('filter', 'string'))
-            )
-            ->addField(
-                StringField::create('title')
-                    ->setLabel('Title')
-                    ->setSortable(true)
-            )
-            ->addField(
-                StringField::create('description')
-                    ->setLabel('Description')
-                    ->setSortable(true)
-            )
-            ->addField(
-                TwigField::create('counted', $this->getTemplateByTheme('field', 'rawLabel'))
-            )
-            ->addField(
-                TwigField::create('enabled', $this->getTemplateByTheme('field', 'enabled'))
-            )
-            ->addField(
-                DateTimeField::create('createdAt')
-            )
-            ->addActionGroup(
-                MainActionGroup::create(
-                    CreateAction::create(),
-                )
-            );
-
-        if ($this->isAdminUser()) {
-            $gridBuilder
-                ->addField(
-                    StringField::create('product')
-                        ->setLabel('Product')
-                        ->setSortable(true)
-                )
-                ->addField(
-                    DateTimeField::create('updatedAt')
-                )
-                ->addActionGroup(
-                    ItemActionGroup::create(
-                        ShowAction::create(),
-                        UpdateAction::create(),
-                        DeleteAction::create(),
-                    )
-                )
-                ->addActionGroup(
-                    BulkActionGroup::create(
-                        DeleteAction::create()
-                    )
-                );
-        }
-
-        if ($this->isShopUser()) {
-            $gridBuilder
-                ->addActionGroup(
-                    ItemActionGroup::create(
-                        ShowAction::create(),
-                        UpdateAction::create(),
-                    )
-                );
-        }
     }
 
     public static function getName(): string
     {
-        return 'app_product_information';
+        return 'app_product_demonstration';
     }
 
     public function getResourceClass(): string
@@ -427,22 +377,88 @@ final class ProductDemonstrationGrid extends AbstractGrid implements ResourceAwa
         return ProductDemonstration::class;
     }
 
-    private function getTokenStorage(): ?TokenStorageInterface
+    public function buildGrid(GridBuilderInterface $gridBuilder): void
     {
-        return $this->tokenStorage;
+        $gridBuilder
+            ->addFilter(Filter::create('product', 'entity')
+                ->setFormOptions(['class' => Product::class])
+                ->setLabel('sylius.ui.product')
+                ->setTemplate($this->getTemplateByTheme('filter', 'entity'))
+                ->setEnabled($this->userAccessHelper->isAdminUser())
+            )
+            ->addFilter(Filter::create('title', 'string')
+                ->setLabel('sylius.ui.title')
+                ->setTemplate($this->getTemplateByTheme('filter', 'string'))
+            )
+            ->addFilter(Filter::create('createdAt', 'date')
+                ->setLabel('sylius.ui.created_at')
+                ->setTemplate($this->getTemplateByTheme('filter', 'date'))
+            )
+            ->addFilter(Filter::create('featured', 'boolean')
+                ->setLabel('app.ui.featured')
+                ->setTemplate($this->getTemplateByTheme('filter', 'boolean'))
+            )
+
+            ->addField(StringField::create('product')
+                ->setLabel('sylius.ui.product')
+                ->setSortable(true)
+                ->setEnabled($this->userAccessHelper->isAdminUser())
+            )
+            ->addField(Field::create('title', 'string')
+                ->setLabel('sylius.ui.title')
+                ->setSortable(true)
+            )
+            ->addField(StringField::create('description')
+                ->setLabel('sylius.ui.description')
+                ->setEnabled($this->userAccessHelper->isAdminPage())
+            )
+            ->addField(TwigField::create('featured', $this->getTemplateByTheme('field', 'yesNo'))
+                ->setLabel('app.ui.featured')
+                ->setSortable(true)
+            )
+            ->addField(DateTimeField::create('createdAt')
+                ->setLabel('sylius.ui.created_at')
+                ->setSortable(true)
+            )
+            ->addField(DateTimeField::create('completedAt')
+                ->setLabel('app.ui.completed_at')
+                ->setSortable(true)
+                ->setEnabled($this->userAccessHelper->isAdminUser())
+            )
+
+            ->addActionGroup(MainActionGroup::create(
+                Action::create('create', $this->getTemplateByTheme('action', 'create'))
+                    ->setEnabled($this->userAccessHelper->isAdminUser()),
+            ))
+            ->addActionGroup(ItemActionGroup::create(
+                Action::create('show', $this->getTemplateByTheme('action', 'show'))
+                    ->setEnabled($this->userAccessHelper->isShopUser()),
+                Action::create('update', $this->getTemplateByTheme('action', 'update')),
+                Action::create('delete', $this->getTemplateByTheme('action', 'delete'))
+                    ->setEnabled($this->userAccessHelper->isAdminUser()),
+            ))
+            ->addActionGroup(BulkActionGroup::create(
+                Action::create('delete', $this->getTemplateByTheme('action', 'delete'))
+                    ->setEnabled($this->userAccessHelper->isAdminUser()),
+            ))
+
+            ->addOrderBy('createdAt')
+            ->setLimits([8, 16, 32, 64])
+        ;
     }
 
-    private function getThemeContext(): ?ThemeContextInterface
+    private function getTemplateByTheme(string $type, string $name): string
     {
-        return $this->themeContext;
-    }
+        $isShopPageOfBootstrapTheme = $this->userAccessHelper->isShopPage() && $this->userThemeHelper->isBootstrapTheme();
 
-    public function getTemplateByTheme(string $type, string $name): string
-    {
+        if ($type === 'action') {
+            return $isShopPageOfBootstrapTheme ? 'theme.bootstrap.' . $name : $name;
+        }
+
         return sprintf(
             '@Sylius%s/Grid/%s/%s.html.twig',
-            $this->isShopPage() && $this->isBootstrapTheme() ? 'Shop' : 'Ui',
-            $type,
+            $isShopPageOfBootstrapTheme ? 'Shop' : 'Ui',
+            ucfirst($type),
             $name,
         );
     }

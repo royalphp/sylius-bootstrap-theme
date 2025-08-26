@@ -27,3 +27,6 @@
 
 # Account order
 ![Account order](media/page_account_order.webp "Detailed information on the customer's order.")
+
+# Account product demonstrations
+![Account product demonstrations](media/page_account_product_demonstrations.webp "List of demo products.")

@@ -20,14 +20,16 @@ sylius_theme:
   sources:
     filesystem:
       directories:
-        - "%kernel.project_dir%/vendor/royalphp/sylius-bootstrap-theme"
+        - '%kernel.project_dir%/vendor/royalphp/sylius-bootstrap-theme'
 ```
 
-#### 2. In the app config, add paths where the compiled files will be located:
-
-in the `config/packages/assets.yaml` add:
+#### 2. In the `config/packages/webpack_encore.yaml` file, add paths where the compiled files will be located:
 
 ```yaml
+webpack_encore:
+  builds:
+    theme.shop.sylius_bootstrap: '%kernel.project_dir%/public/build/theme/shop/sylius-bootstrap'
+
 framework:
   assets:
     packages:
@@ -35,18 +37,12 @@ framework:
         json_manifest_path: '%kernel.project_dir%/public/build/theme/shop/sylius-bootstrap/manifest.json'
 ```
 
-and in the `config/packages/webpack_encore.yaml` add:
-
-```yaml
-webpack_encore:
-  builds:
-    theme.shop.sylius_bootstrap: '%kernel.project_dir%/public/build/theme/shop/sylius-bootstrap'
-```
-
-#### 3. Also in the `config/packages/_sylius.yaml` file, add templates of Grid system:
+#### 3. Also in the app config, add templates of Grid system:
 
 We redefine general styles for the Grid, so you also need to write the following settings
 (why you need to do this, you can find out in [this guide](installation_overrides.md)):
+
+in the `config/packages/sylius_ui.yaml` add:
 
 ```yaml
 sylius_ui:
@@ -72,7 +68,11 @@ sylius_ui:
         content:
           template: "@SyliusShop/Grid/Filter/_content.html.twig"
           priority: 10
+```
 
+and in the `config/packages/sylius_grid.yaml` add:
+
+```yaml
 sylius_grid:
   templates:
     action:
@@ -96,9 +96,6 @@ sylius_grid:
       theme.bootstrap.delete: '@SyliusShop/Grid/BulkAction/delete.html.twig'
 ```
 
-> [!TIP]
-> For convenience, you can also move these settings to separate `config/packages/sylius_ui.yaml` and `config/packages/sylius_grid.yaml` files respectively.
-
 ### Configuring Encore/Webpack
 
 All javascript extensions for the user interface have been rewritten in typescript,
@@ -107,21 +104,21 @@ so if your project is still not using it, you need to perform the following step
 #### 1. Add Encore/Webpack depends:
 
 ```shell
-yarn add --dev \
+npm install --save-dev \
     typescript \
     ts-loader@^9.0.0
 ```
 
 > [!IMPORTANT]  
 > If you are installing typescript for the first time, you will also need a configuration file,
-> you can generate a default one with this command `npx tsc --init`.
+> you can use [this config](https://github.com/royalphp/sylius-demo/blob/1.x/tsconfig.json) from the demo example.
 
 #### 2. Add theme depends:
 
 You need to prepare a new theme for working with webpack and include it in the build process.
 
 ```shell
-yarn add --dev \
+npm install --save-dev \
     @types/bootstrap \
     @popperjs/core \
     bootstrap \
@@ -165,12 +162,12 @@ module.exports = [
 After performing all the above steps, you can build assets:
 
 ```shell
-yarn encore dev --progress
+npx encore dev
 ```
 
 > [!NOTE]  
-> If you are using the `Sylius-Standard` edition, or previously installed WebpackEncoreBundle,
-> you are likely to have quick commands from the `package.json` file in the `scripts` section such as `yarn build` and others.
+> If you are using the `Sylius-Standard` edition, or `sylius-demo`,
+> you are likely to have quick commands from the `package.json` file in the `scripts` section such as `npm run dev` and others.
 
 ### Use SyliusBootstrapTheme
 

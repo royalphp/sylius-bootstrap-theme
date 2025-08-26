@@ -82,6 +82,11 @@
                     "path": "docs/media/page_account_order.webp",
                     "title": "Account order",
                     "description": "Detailed information on the customer's order."
+                },
+                {
+                    "path": "docs/media/page_account_product_demonstrations.webp",
+                    "title": "Account product demonstrations",
+                    "description": "List of demo products."
                 }
             ]
         }

@@ -118,9 +118,13 @@ module.exports = [
 
 Next, we need to add the configuration to the project itself:
 
-#### 3. Add the following to the `config/packages/assets.yaml` file:
+#### 3. Add the following to the `config/packages/webpack_encore.yaml` file:
 
 ```yaml
+webpack_encore:
+  builds:
+    theme.shop.custom_bootstrap: '%kernel.project_dir%/public/build/theme/shop/custom-bootstrap'
+
 framework:
   assets:
     packages:
@@ -128,45 +132,37 @@ framework:
         json_manifest_path: '%kernel.project_dir%/public/build/theme/shop/custom-bootstrap/manifest.json'
 ```
 
-#### 4. Add the following to the `config/packages/webpack_encore.yaml` file:
-
-```yaml
-webpack_encore:
-  builds:
-    theme.shop.custom_bootstrap: '%kernel.project_dir%/public/build/theme/shop/custom-bootstrap'
-```
-
 Next, we need to override two template files where scripts and styles are being included:
 
-#### 5. Create corresponding files:
+#### 4. Create corresponding files:
 
 ```shell
 mkdir -p themes/CustomBootstrapTheme/templates/bundles/SyliusShopBundle/
 touch themes/CustomBootstrapTheme/templates/bundles/SyliusShopBundle/{_scripts.html.twig,_styles.html.twig}
 ```
 
-#### 6. For `_scripts.html.twig` file, add the following:
+#### 5. For `_scripts.html.twig` file, add the following:
 
 ```html
 {{ encore_entry_script_tags('theme-shop-custom-bootstrap-entry', null, 'theme.shop.custom_bootstrap') }}
 ```
 
-#### 7. And add the following for `_styles.html.twig` file:
+#### 6. And add the following for `_styles.html.twig` file:
 
 ```html
 {{ encore_entry_link_tags('theme-shop-custom-bootstrap-style', null, 'theme.shop.custom_bootstrap') }}
 ```
 
-#### 8. Include the scripts and styles you need:
+#### 7. Include the scripts and styles you need:
 
 As a starting point, you can copy the contents of the scripts/styles entry files
 located in the `vendor/royalphp/sylius-bootstrap-theme/assets/scripts/entry.ts`/`vendor/royalphp/sylius-bootstrap-theme/assets/styles/entry.scss` folders,
 and then remove or add whatever you want.
 
-#### 9. The only thing left is to compile your assets:
+#### 8. The only thing left is to compile your assets:
 
 ```shell
-yarn encore dev --progress
+npx encore dev
 ```
 
 **[Go back to the documentation's index](index.md)**
